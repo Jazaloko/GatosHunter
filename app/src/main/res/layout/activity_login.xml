@@ -52,7 +52,7 @@
     <!-- Nuevo LinearLayout (debajo de los anteriores) -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="533dp"
+        android:layout_height="match_parent"
         android:background="#EEEEEE"
         android:orientation="vertical"
         android:padding="16dp">
