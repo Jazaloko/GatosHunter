@@ -5,20 +5,19 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 
-class LoginActivity : AppCompatActivity() {
+class StartActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_start)
 
-        val loginButton: Button = findViewById(R.id.loginButton)
+        val startButton: Button = findViewById(R.id.loginButton)
 
-        loginButton.setOnClickListener {
-            // Redirigir a MainActivity
+        startButton.setOnClickListener {
+            // Redirigir a login
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish() // Opcional: Cierra la actividad de login
         }
     }
 }
-
