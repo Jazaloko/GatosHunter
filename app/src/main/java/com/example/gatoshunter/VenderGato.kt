@@ -31,7 +31,7 @@ class VenderGato : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         //recyclerView.setHasFixedSize(true)
 
-        // Lista de gatos inicial
+        // Lista de compradores inicial
         val compradores = listOf(
             Comprador(1, "Paco", "Las palmas"),
             Comprador(2, "Pepe", "Telde")
