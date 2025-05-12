@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Sección superior: Layout horizontal con imagen y botones -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <!-- Sección de imagen y texto -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+
+            <!-- Imagen -->
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/icon_gato1"
+                android:layout_gravity="left"
+                android:scaleType="centerCrop" />
+
+            <!-- Primer TextView -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Nombre Usuario"
+                android:textSize="14sp"
+                android:textColor="#808080"
+                android:gravity="center" />
+
+            <!-- Segundo TextView -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$xxx"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Sección de botones -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:layout_marginStart="16dp">
+
+            <!-- Primer botón -->
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Buscar gato"
+                android:textAllCaps="false"
+                android:backgroundTint="#6200EE"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Segundo botón -->
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vender gato"
+                android:textAllCaps="false"
+                android:backgroundTint="#6200EE"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Nuevo LinearLayout (debajo de los anteriores) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="533dp"
+        android:background="#EEEEEE"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+
+
+    </LinearLayout>
+</LinearLayout>
+

@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Gatos Hunter</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="volver_atras">Volver Atras</string>
+    <string name="comprar_gato">Comprar Gato</string>
+    <string name="nombre_del_gato">Nombre del Gato</string>
+    <string name="descripci_n">Descripción</string>
+    <string name="localidad">Localidad</string>
+    <string name="peso">Peso</string>
+    <string name="nombre_del_comprador">Nombre del comprador</string>
+    <string name="localidad_del_comprador">Localidad del comprador</string>
+    <string name="vender_gato">Vender Gato</string>
+</resources>

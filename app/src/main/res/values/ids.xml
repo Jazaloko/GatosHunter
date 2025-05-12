@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="pesoTextView" type="id" />
+    <item name="localidadTextView" type="id" />
+    <item name="descripcionTextView" type="id" />
+    <item name="nombreTextView" type="id" />
+</resources>

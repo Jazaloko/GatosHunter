@@ -1,0 +1,36 @@
+<!-- item_gato.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:layout_marginBottom="8dp">
+
+    <TextView
+        android:id="@+id/nombreGato"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nombre_del_gato"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/pesoGato"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/peso"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/localidadGato"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/localidad"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/descripcionGato"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/descripci_n"
+        android:textSize="14sp" />
+</LinearLayout>
