@@ -92,7 +92,7 @@
             android:background="#D0D0D0"/>
 
         <Button
-            android:id="@+id/botonConAparienciaTextView"
+            android:id="@+id/buttonLost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Has olvidado la contraseña"
@@ -107,7 +107,7 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/button1"
+                android:id="@+id/buttonLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#6200EE"
@@ -149,7 +149,7 @@
 
             <!-- Segundo botón -->
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/buttonRegister"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="8dp"
