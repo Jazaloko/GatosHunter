@@ -85,7 +85,7 @@
 
             <!-- Segundo botón -->
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/buttonRegistrar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="8dp"

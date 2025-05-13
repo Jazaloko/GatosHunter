@@ -1,17 +1,13 @@
 package com.example.gatoshunter
 
-import android.annotation.SuppressLint
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.miapp.database.DatabaseHelper
-import java.util.concurrent.TimeUnit
+import com.example.gatoshunter.clases.Comprador
+import com.example.gatoshunter.clases.CompradorAdapter
 
 class VenderGato : AppCompatActivity() {
 
@@ -33,8 +29,8 @@ class VenderGato : AppCompatActivity() {
 
         // Lista de compradores inicial
         val compradores = listOf(
-            Comprador(1, "Paco", "Las palmas"),
-            Comprador(2, "Pepe", "Telde")
+            Comprador(1, "Paco", 200.0, "Ciudad A"),
+            Comprador(2, "Pepe", 300.0, "Ciudad B")
         )
 
         // Configuración del adaptador
