@@ -1,5 +1,6 @@
 package com.example.gatoshunter
 
+import TemporizadorMedianoche
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.icu.util.Calendar
@@ -93,8 +94,14 @@ class BuscarGato : AppCompatActivity() {
             }
         }
 
+        val temporizador = TemporizadorMedianoche(timerTextView) {
+            // Acción que se ejecuta a medianoche
+            // Por ejemplo: recargar lista, resetear contador, etc.
+            updateRecyclerViewData()
+        }
+
         // Inicia o restaura el temporizador
-        startMidnightCountdown()
+        temporizador.iniciar()
     }
 
     // Simula la actualización de datos del RecyclerView
@@ -108,44 +115,6 @@ class BuscarGato : AppCompatActivity() {
     // Genera datos simulados
     private fun fetchNewData(): List<Gato> {
         return gatos.shuffled().take(3)
-    }
-    private fun getMillisUntilMidnight(): Long {
-        val now = Calendar.getInstance()
-        val midnight = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-            add(Calendar.DAY_OF_YEAR, 1) // Nos movemos al próximo día a las 00:00
-        }
-        return midnight.timeInMillis - now.timeInMillis
-    }
-
-    private fun startMidnightCountdown() {
-        handler.post(object : Runnable {
-            override fun run() {
-                val millisRemaining = getMillisUntilMidnight()
-
-                if (millisRemaining > 0) {
-                    updateTimerText(millisRemaining)
-                    handler.postDelayed(this, 1000) // Repite cada segundo
-                } else {
-                    // Medianoche alcanzada
-                    timerTextView.text = "Tiempo restante: 00:00:00"
-                    updateRecyclerViewData() // Aquí puedes actualizar tu lista de gatos
-                    handler.postDelayed(this, 1000) // Reiniciar para el nuevo día
-                }
-            }
-        })
-    }
-
-    private fun updateTimerText(millis: Long) {
-        val hours = TimeUnit.MILLISECONDS.toHours(millis)
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % 60
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60
-
-        timerTextView.text = String.format("Tiempo restante: %02d:%02d:%02d", hours, minutes, seconds)
     }
 
     private fun guardarGatosMostradosEnPrefs(ids: List<Int>) {

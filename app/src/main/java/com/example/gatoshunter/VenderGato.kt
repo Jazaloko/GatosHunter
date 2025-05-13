@@ -18,6 +18,9 @@ class VenderGato : AppCompatActivity() {
     // Adaptador para el RecyclerView
     private lateinit var adapter: CompradorAdapter
 
+    // Temporizador
+    private lateinit var timerTextView: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.vender_gatos)
