@@ -2,6 +2,7 @@ package com.example.gatoshunter
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.os.Handler
 import android.widget.Button
@@ -22,14 +23,15 @@ class BuscarGato : AppCompatActivity() {
     private lateinit var adapter: GatoAdapter
 
     // Temporizador
-    private val timerDuration = 10 * 60 * 1000L // 10 minutos en milisegundos
-    private lateinit var sharedPreferences: SharedPreferences
+//    private val timerDuration = 10 * 60 * 1000L // 10 minutos en milisegundos
+//    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var timerTextView: TextView
 
     // Handler y Runnable para actualización en tiempo real
     private val handler = Handler()
-    private var startTime = 0L // Guardar el tiempo de inicio del temporizador
-    private var elapsedTime = 0L // Tiempo transcurrido desde que el temporizador empezó
-    private var remainingTime = timerDuration // Tiempo restante del temporizador
+//    private var startTime = 0L // Guardar el tiempo de inicio del temporizador
+//    private var elapsedTime = 0L // Tiempo transcurrido desde que el temporizador empezó
+//    private var remainingTime = timerDuration // Tiempo restante del temporizador
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +41,9 @@ class BuscarGato : AppCompatActivity() {
         // Inicialización de los botones
         val backButton: Button = findViewById(R.id.backbutton)
         val buyButton: Button = findViewById(R.id.buybutton)
+
+        //Timer
+        timerTextView = findViewById(R.id.Temporizador)
 
         // Inicialización del RecyclerView
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
@@ -57,10 +62,10 @@ class BuscarGato : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         // Inicialización de SharedPreferences para el temporizador
-        sharedPreferences = getSharedPreferences("TimerPrefs", MODE_PRIVATE)
-        startTime = sharedPreferences.getLong("startTime", 0L) // Cargar el tiempo de inicio
-        elapsedTime = sharedPreferences.getLong("elapsedTime", 0L) // Tiempo transcurrido
-        remainingTime = timerDuration - elapsedTime // Calcular el tiempo restante
+//        sharedPreferences = getSharedPreferences("TimerPrefs", MODE_PRIVATE)
+//        startTime = sharedPreferences.getLong("startTime", 0L) // Cargar el tiempo de inicio
+//        elapsedTime = sharedPreferences.getLong("elapsedTime", 0L) // Tiempo transcurrido
+//        remainingTime = timerDuration - elapsedTime // Calcular el tiempo restante
 
         // Configurar las acciones de los botones
         backButton.setOnClickListener {
@@ -83,79 +88,79 @@ class BuscarGato : AppCompatActivity() {
         }
 
         // Inicia o restaura el temporizador
-        updateTimerUI()
+//        updateTimerUI()
 
     }
 
     // Método para actualizar la interfaz del temporizador
-    private fun updateTimerUI() {
-        if (remainingTime > 0) {
-            updateTimerText(remainingTime)
-            handler.postDelayed(timerRunnable, 1000) // Actualiza el temporizador cada segundo
-        } else {
-            onTimerFinished()
-        }
-    }
+//    private fun updateTimerUI() {
+//        if (remainingTime > 0) {
+//            updateTimerText(remainingTime)
+//            handler.postDelayed(timerRunnable, 1000) // Actualiza el temporizador cada segundo
+//        } else {
+//            onTimerFinished()
+//        }
+//    }
 
     // Lógica para manejar el final del temporizador
-    private fun onTimerFinished() {
-        findViewById<TextView>(R.id.Temporizador).text = "00:00"
-        sharedPreferences.edit().remove("startTime").apply() // Borra el tiempo de inicio guardado
-        sharedPreferences.edit().remove("elapsedTime").apply() // Borra el tiempo transcurrido guardado
-        updateRecyclerViewData() // Actualiza los datos del RecyclerView con nuevos datos
-        startNewTimer() // Reinicia el temporizador
-    }
+//    private fun onTimerFinished() {
+//        findViewById<TextView>(R.id.Temporizador).text = "00:00"
+//        sharedPreferences.edit().remove("startTime").apply() // Borra el tiempo de inicio guardado
+//        sharedPreferences.edit().remove("elapsedTime").apply() // Borra el tiempo transcurrido guardado
+//        updateRecyclerViewData() // Actualiza los datos del RecyclerView con nuevos datos
+//        startNewTimer() // Reinicia el temporizador
+//    }
 
     // Reinicia el temporizador guardando el nuevo tiempo de inicio
-    private fun startNewTimer() {
-        startTime = System.currentTimeMillis() // Establece el nuevo tiempo de inicio
-        sharedPreferences.edit().putLong("startTime", startTime).apply() // Guarda el nuevo tiempo de inicio
-        remainingTime = timerDuration // Resetea el tiempo restante
-        updateTimerUI() // Actualiza la interfaz para reflejar el nuevo tiempo
-    }
+//    private fun startNewTimer() {
+//        startTime = System.currentTimeMillis() // Establece el nuevo tiempo de inicio
+//        sharedPreferences.edit().putLong("startTime", startTime).apply() // Guarda el nuevo tiempo de inicio
+//        remainingTime = timerDuration // Resetea el tiempo restante
+//        updateTimerUI() // Actualiza la interfaz para reflejar el nuevo tiempo
+//    }
 
     // Actualiza el texto del temporizador en la interfaz
-    private fun updateTimerText(remainingTime: Long) {
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(remainingTime) % 60
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(remainingTime) % 60
-        findViewById<TextView>(R.id.Temporizador).text =
-            "Tiempo restante: ${String.format("%02d:%02d", minutes, seconds)}"
-    }
+//    private fun updateTimerText(remainingTime: Long) {
+//        val minutes = TimeUnit.MILLISECONDS.toMinutes(remainingTime) % 60
+//        val seconds = TimeUnit.MILLISECONDS.toSeconds(remainingTime) % 60
+//        findViewById<TextView>(R.id.Temporizador).text =
+//            "Tiempo restante: ${String.format("%02d:%02d", minutes, seconds)}"
+//    }
 
     // Runnable para actualizar el temporizador cada segundo
-    private val timerRunnable = object : Runnable {
-        override fun run() {
-            val currentTime = System.currentTimeMillis()
-            elapsedTime = currentTime - startTime // Calcula el tiempo transcurrido
-            remainingTime = timerDuration - elapsedTime // Calcula el tiempo restante
-
-            if (remainingTime > 0) {
-                updateTimerText(remainingTime)
-                handler.postDelayed(this, 1000) // Actualiza el temporizador en 1 segundo
-            } else {
-                onTimerFinished() // Si el temporizador llega a 0, finaliza
-            }
-        }
-    }
+//    private val timerRunnable = object : Runnable {
+//        override fun run() {
+//            val currentTime = System.currentTimeMillis()
+//            elapsedTime = currentTime - startTime // Calcula el tiempo transcurrido
+//            remainingTime = timerDuration - elapsedTime // Calcula el tiempo restante
+//
+//            if (remainingTime > 0) {
+//                updateTimerText(remainingTime)
+//                handler.postDelayed(this, 1000) // Actualiza el temporizador en 1 segundo
+//            } else {
+//                onTimerFinished() // Si el temporizador llega a 0, finaliza
+//            }
+//        }
+//    }
 
     // Guarda el tiempo de inicio cuando la app se pausa
-    override fun onPause() {
-        super.onPause()
-        handler.removeCallbacks(timerRunnable) // Detiene el Runnable
-        sharedPreferences.edit().putLong("startTime", startTime).apply() // Guarda el tiempo de inicio cuando la app se pausa
-        sharedPreferences.edit().putLong("elapsedTime", elapsedTime).apply() // Guarda el tiempo transcurrido
-    }
+//    override fun onPause() {
+//        super.onPause()
+//        handler.removeCallbacks(timerRunnable) // Detiene el Runnable
+//        sharedPreferences.edit().putLong("startTime", startTime).apply() // Guarda el tiempo de inicio cuando la app se pausa
+//        sharedPreferences.edit().putLong("elapsedTime", elapsedTime).apply() // Guarda el tiempo transcurrido
+//    }
 
     // Calcula el tiempo restante al reanudar la actividad
-    override fun onResume() {
-        super.onResume()
-
-        // Actualizamos inmediatamente el temporizador en la UI para evitar el parpadeo
-        updateTimerUI()
-
-        // Inicia el Runnable para actualizaciones constantes
-        handler.post(timerRunnable)
-    }
+//    override fun onResume() {
+//        super.onResume()
+//
+//        // Actualizamos inmediatamente el temporizador en la UI para evitar el parpadeo
+//        updateTimerUI()
+//
+//        // Inicia el Runnable para actualizaciones constantes
+//        handler.post(timerRunnable)
+//    }
 
     // Simula la actualización de datos del RecyclerView
     private fun updateRecyclerViewData() {
@@ -171,4 +176,56 @@ class BuscarGato : AppCompatActivity() {
             Gato(5, "Nuevo Gato 2", 4.1, "Ciudad E", "Amante de los abrazos")
         )
     }
+    private fun getMillisUntilMidnight(): Long {
+        val now = Calendar.getInstance()
+        val midnight = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+            add(Calendar.DAY_OF_YEAR, 1) // Nos movemos al próximo día a las 00:00
+        }
+        return midnight.timeInMillis - now.timeInMillis
+    }
+
+    private fun startMidnightCountdown() {
+        handler.post(object : Runnable {
+            override fun run() {
+                val millisRemaining = getMillisUntilMidnight()
+
+                if (millisRemaining > 0) {
+                    updateTimerText(millisRemaining)
+                    handler.postDelayed(this, 1000) // Repite cada segundo
+                } else {
+                    // Medianoche alcanzada
+                    timerTextView.text = "Tiempo restante: 00:00:00"
+                    updateRecyclerViewData() // Aquí puedes actualizar tu lista de gatos
+                    handler.postDelayed(this, 1000) // Reiniciar para el nuevo día
+                }
+            }
+        })
+    }
+
+    private fun updateTimerText(millis: Long) {
+        val hours = TimeUnit.MILLISECONDS.toHours(millis)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % 60
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60
+
+        timerTextView.text = String.format("Tiempo restante: %02d:%02d:%02d", hours, minutes, seconds)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacksAndMessages(null) // Detiene el temporizador
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startMidnightCountdown() // Lo reinicia al volver
+    }
+
+
+
+
 }
