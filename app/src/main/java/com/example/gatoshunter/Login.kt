@@ -26,6 +26,7 @@ class Login : AppCompatActivity() {
         val registerButton: Button = findViewById(R.id.buttonRegister)
         val userName: EditText = findViewById(R.id.userName)
         val password: EditText = findViewById(R.id.password)
+        dbHelper = DatabaseHelper(this)
 
         Log.d("Login", "onCreate called")
 
@@ -33,7 +34,6 @@ class Login : AppCompatActivity() {
         registerButton.setOnClickListener {
             val intent = Intent(this, Register::class.java)
             startActivity(intent)
-            finish()
         }
 
         loginButton.setOnClickListener {
@@ -48,7 +48,7 @@ class Login : AppCompatActivity() {
                         if (userFound) {
                             val prefs = applicationContext.getAppSharedPreferences()
                             prefs.putBooleanAsync("isLoggedIn", true) // Guardar estado de login
-                            prefs.putIntAsync("loggedInUserId", user!!.id) // Usar !! con precaución si estás seguro de que no es null
+                            prefs.putIntAsync("loggedInUserId", user!!.id!!) // Usar !! con precaución si estás seguro de que no es null
 
                             Toast.makeText(this@Login, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this@Login, MainActivity::class.java)

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.3"
+agp = "8.6.0"
 kotlin = "1.9.24"
 coreKtx = "1.10.1"
 junit = "4.13.2"
@@ -15,6 +15,7 @@ navigationFragmentKtx = "2.6.0"
 navigationUiKtx = "2.6.0"
 gridlayout = "1.0.0"
 desugarJdkLibs = "2.1.5"
+junitJunit = "4.12"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -31,6 +32,7 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 androidx-gridlayout = { group = "androidx.gridlayout", name = "gridlayout", version.ref = "gridlayout" }
 android-tools-desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 mongodb-driver-kotlin-sync = { module = "org.mongodb:mongodb-driver-kotlin-sync", version.ref = "mongodbDriverKotlinSync" }
+junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

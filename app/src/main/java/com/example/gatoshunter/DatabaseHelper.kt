@@ -72,7 +72,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     fun insertarUsuario(Usuario: User) {
         val db = writableDatabase
         val values = ContentValues().apply {
-            put(COLUMN_ID, Usuario.id)
             put(COLUMN_NOMBRE, Usuario.nombre)
             put(COLUMN_DINERO, Usuario.dinero)
             put(COLUMN_PASSWORD, Usuario.password)

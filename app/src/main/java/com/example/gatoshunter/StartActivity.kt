@@ -16,10 +16,13 @@ class StartActivity : AppCompatActivity() {
 
         startButton.setOnClickListener {
             // Redirigir a login
-            val intent = Intent(this, Login::class.java)
-            Log.println(Log.INFO, "Login", "Login button clicked")
-            startActivity(intent)
-            finish() // Opcional: Cierra la actividad de login
+            try {
+                val intent = Intent(this, Login::class.java)
+                Log.println(Log.INFO, "Login", "Login button clicked")
+                startActivity(intent)
+            } catch (e: Exception) {
+                Log.e("StartActivity", "Error al iniciar LoginActivity", e)
+            }
         }
     }
 }

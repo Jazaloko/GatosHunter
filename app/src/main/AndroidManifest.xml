@@ -13,12 +13,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.GatosHunter"
-        tools:targetApi="31">
+        android:theme="@style/Theme.GatosHunter">
         <activity
             android:name=".StartActivity"
-            android:exported="true"
-            android:label="@string/app_name">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,6 +26,8 @@
         <activity android:name=".MainActivity" android:exported="true" />
         <activity android:name=".BuscarGato" android:exported="true" />
         <activity android:name=".VenderGato" android:exported="true" />
+        <activity android:name=".Login" android:exported="true" />
+        <activity android:name=".Register" android:exported="true" />
     </application>
 
 </manifest>

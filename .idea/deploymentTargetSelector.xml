@@ -4,9 +4,14 @@
     <selectionStates>
       <SelectionState runConfigName="StartActivity">
         <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="Gatos_Hunter">
-        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-05-13T22:24:25.175925700Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=AERG6X8HCEFUJ7S8" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
       </SelectionState>
     </selectionStates>
   </component>
