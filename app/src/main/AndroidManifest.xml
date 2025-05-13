@@ -14,7 +14,7 @@
         android:theme="@style/Theme.GatosHunter"
         tools:targetApi="31">
         <activity
-            android:name=".LoginActivity"
+            android:name=".StartActivity"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>

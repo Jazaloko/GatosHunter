@@ -10,11 +10,11 @@ class Register : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        val registerButton: Button = findViewById("x")
-        val volverAtras: Button = findViewById("x")
-
-        registerButton.setOnClickListener {
-            //Comprobar los campos para ver que todos tienen datos, en caso correcto, Registrar al usuario, en caso contrario mostrar mensaje de error
-        }
+//        val registerButton: Button = findViewById("x")
+//        val volverAtras: Button = findViewById("x")
+//
+//        registerButton.setOnClickListener {
+//            //Comprobar los campos para ver que todos tienen datos, en caso correcto, Registrar al usuario, en caso contrario mostrar mensaje de error
+//        }
     }
 }

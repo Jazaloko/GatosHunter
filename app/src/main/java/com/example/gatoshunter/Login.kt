@@ -18,11 +18,11 @@ class Login : AppCompatActivity() {
         val password: EditText = findViewById(R.id.password)
 
         //Funcion para redirigir a la pagina de Registrar
-        registerButton.setOnClickListener {
-            val intent = Intent(this, Register::class.java)
-            startActivity(intent)
-            finish()
-        }
+//        registerButton.setOnClickListener {
+//            val intent = Intent(this, Register::class.java)
+//            startActivity(intent)
+//            finish()
+//        }
 
         loginButton.setOnClickListener {
             if (userName.text.isNullOrEmpty() || userName.text.isNullOrBlank() && password.text.isNullOrBlank() || userName.text.isNullOrEmpty()){
