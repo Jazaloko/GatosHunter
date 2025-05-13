@@ -1,7 +1,6 @@
 package com.example.gatoshunter
 
 import android.annotation.SuppressLint
-import android.content.SharedPreferences
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.os.Handler
@@ -11,13 +10,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.miapp.database.DatabaseHelper
+import com.example.gatoshunter.clases.Gato
+import com.example.gatoshunter.clases.GatoAdapter
 import java.util.concurrent.TimeUnit
 
 class BuscarGato : AppCompatActivity() {
 
     // Base de datos
-    private lateinit var dbHelper: DatabaseHelper
 
     // Adaptador para el RecyclerView
     private lateinit var adapter: GatoAdapter
@@ -52,9 +51,9 @@ class BuscarGato : AppCompatActivity() {
 
         // Lista de gatos inicial
         val gatos = listOf(
-            Gato(1, "Gato1", 4.5, "Ciudad A", "Gato muy juguetón"),
-            Gato(2, "Gato2", 3.2, "Ciudad B", "Gato tranquilo"),
-            Gato(3, "Gato3", 5.0, "Ciudad C", "Gato curioso")
+            Gato(1, "Gato1", 4.5, "Ciudad A", "Gato muy juguetón", "Feliz"),
+            Gato(2, "Gato2", 3.2, "Ciudad B", "Gato tranquilo", "Triste"),
+            Gato(3, "Gato3", 5.0, "Ciudad C", "Gato curioso", "Encantado")
         )
 
         // Configuración del adaptador
@@ -172,8 +171,8 @@ class BuscarGato : AppCompatActivity() {
     // Genera datos simulados
     private fun fetchNewData(): List<Gato> {
         return listOf(
-            Gato(4, "Nuevo Gato 1", 4.8, "Ciudad D", "Muy sociable"),
-            Gato(5, "Nuevo Gato 2", 4.1, "Ciudad E", "Amante de los abrazos")
+            Gato(4, "Nuevo Gato 1", 4.8, "Ciudad D", "Muy sociable", "Encantado"),
+            Gato(5, "Nuevo Gato 2", 4.1, "Ciudad E", "Amante de los abrazos", "Triste")
         )
     }
     private fun getMillisUntilMidnight(): Long {
