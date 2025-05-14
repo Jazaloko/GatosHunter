@@ -59,17 +59,17 @@ Gracias por jugar a Gatos Hunter. ¡Disfruta rescatando gatitos mientras juegas 
             android:textSize="16sp"
             android:textColor="#333333"
             android:lineSpacingExtra="4dp" />
-</ScrollView>
+    </ScrollView>
 
     <Button
-    android:id="@+id/buttonVolverPolitica"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Volver"
-    android:textAllCaps="false"
-    android:textColor="#FFFFFF"
-    android:backgroundTint="#6200EE"
-    android:layout_gravity="center"
-    android:layout_marginTop="16dp" />
-    </LinearLayout>
+        android:id="@+id/buttonVolverPolitica"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Volver"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#6200EE"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
 

@@ -74,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:background="#D0D0D0"/>
+            android:background="#D0D0D0" />
 
         <!-- Segundo TextView -->
         <TextView
@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:background="#D0D0D0"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword" />
 
         <!-- Botón "Has olvidado la contraseña" -->
         <Button
@@ -165,9 +165,10 @@
                 android:textColor="#FFFFFF" />
 
             <!-- NUEVO: Imagen y botón en una fila -->
-            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -214,5 +215,5 @@
         </LinearLayout>
     </LinearLayout>
 
-        <!-- Botón Aviso Legal -->
-    </LinearLayout>
+    <!-- Botón Aviso Legal -->
+</LinearLayout>

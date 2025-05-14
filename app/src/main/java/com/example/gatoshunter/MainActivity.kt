@@ -10,12 +10,18 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.gatoshunter.clases.AvatarAdapter
+import com.example.gatoshunter.clases.Gato
+import com.example.gatoshunter.clases.GatoAdapter
+import com.example.gatoshunter.clases.MainAdapter
 import com.example.gatoshunter.clases.User
 import com.example.miapp.database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var dbHelper: DatabaseHelper
     var textUser: TextView? = null
     var textDinero: TextView? = null
+    private lateinit var adapter: MainAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +55,12 @@ class MainActivity : AppCompatActivity() {
         textDinero = findViewById(R.id.textDinero)
         dbHelper = DatabaseHelper(this)
 
-
+        // Inicialización del RecyclerView
+        val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.setHasFixedSize(true)
+        adapter = MainAdapter(emptyList())
+        recyclerView.adapter = adapter
 
         // Acciones de botones
         button1.setOnClickListener {
@@ -68,10 +80,27 @@ class MainActivity : AppCompatActivity() {
 
         try {
             colocarDatosUsuario()
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Log.e("MainActivity", "Error al colocar datos del usuario", e)
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Recargar los datos de los gatos cada vez que la Activity vuelve a estar visible
+        cargarDatosGatos()
+    }
+
+    private fun cargarDatosGatos() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            // Asume que tienes una función en DatabaseHelper para obtener todos los gatos
+            val listaActualizadaDeGatos = dbHelper.obtenerGatosUser()
+            withContext(Dispatchers.Main) {
+                // Actualiza la lista en el adaptador y notifica los cambios
+                adapter.actualizarLista(listaActualizadaDeGatos)
+            }
+        }
     }
 
     fun colocarDatosUsuario() {
@@ -99,7 +128,8 @@ class MainActivity : AppCompatActivity() {
                 }
             } else {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@MainActivity, "Usuario no logeado", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "Usuario no logeado", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -190,7 +220,8 @@ class MainActivity : AppCompatActivity() {
             if (selectedImageUri != null) {
                 try {
                     // Cargar el Bitmap desde la Uri
-                    val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImageUri)
+                    val bitmap =
+                        MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImageUri)
 
                     // Mostrar la imagen seleccionada en el ImageView
                     profileImageView.setImageBitmap(bitmap)
@@ -242,7 +273,10 @@ class MainActivity : AppCompatActivity() {
 
                 //Actualizar en SharedPreferences
                 val editor = prefs.edit()
-                editor.putUserAsync("Usuario", user!!) // Usamos !! aquí porque ya verificamos que currentUser no es null
+                editor.putUserAsync(
+                    "Usuario",
+                    user!!
+                ) // Usamos !! aquí porque ya verificamos que currentUser no es null
 
                 //Actualizar en la base de datos SQLite
                 if (user?.id != null) {
@@ -250,13 +284,25 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     Log.w("MainActivity", "User ID es null")
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@MainActivity, "No se pudo actualizar la imagen en la base de datos (ID nulo)", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@MainActivity,
+                            "No se pudo actualizar la imagen en la base de datos (ID nulo)",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             } catch (e: Exception) {
-                Log.e("MainActivity", "Error actualizando la imagen en la base de datos o en SharedPreferences", e)
+                Log.e(
+                    "MainActivity",
+                    "Error actualizando la imagen en la base de datos o en SharedPreferences",
+                    e
+                )
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@MainActivity, "Error al guardar la imagen de perfil", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Error al guardar la imagen de perfil",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }

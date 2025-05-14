@@ -54,9 +54,12 @@ class Login : AppCompatActivity() {
 
         loginButton.setOnClickListener {
             //Mandar a verificar los datos del login, en caso correcto, redirigir al MainActivity, en caso contrario, Salte mensaje de error
-            if (validarCampos()){
-                lifecycleScope.launch(Dispatchers.IO){
-                    val (userFound, user) = dbHelper.checkUserAndGetUser(userName.text.toString(), password.text.toString())
+            if (validarCampos()) {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val (userFound, user) = dbHelper.checkUserAndGetUser(
+                        userName.text.toString(),
+                        password.text.toString()
+                    )
 
                     withContext(Dispatchers.Main) {
                         if (userFound) {
@@ -66,16 +69,24 @@ class Login : AppCompatActivity() {
                                 prefs.putBooleanAsync("isLoggedIn", true) // Guardar estado de login
                                 editor.putUserAsync("Usuario", user!!)
 
-                                Toast.makeText(this@Login, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this@Login,
+                                    "Inicio de sesión exitoso",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 val intent = Intent(this@Login, MainActivity::class.java)
                                 startActivity(intent)
                                 finish()
-                            } catch (e : Exception) {
+                            } catch (e: Exception) {
                                 Log.e("Login", "Error al colocar datos del usuario", e)
                             }
 
                         } else {
-                            Toast.makeText(this@Login, "El usuario no existe o la contraseña es incorrecta", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@Login,
+                                "El usuario no existe o la contraseña es incorrecta",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -92,9 +103,14 @@ class Login : AppCompatActivity() {
 
         if (userNameEmpty && passwordEmpty) {
             // Ambos campos están vacíos
-            Toast.makeText(this, "Por favor, rellena el nombre de usuario y la contraseña.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Por favor, rellena el nombre de usuario y la contraseña.",
+                Toast.LENGTH_SHORT
+            ).show()
         } else if (userNameEmpty) {
-            Toast.makeText(this, "Por favor, rellena el nombre de usuario.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Por favor, rellena el nombre de usuario.", Toast.LENGTH_SHORT)
+                .show()
             esValido = false
         } else if (passwordEmpty) {
             Toast.makeText(this, "Por favor, rellena la contraseña.", Toast.LENGTH_SHORT).show()
@@ -105,7 +121,6 @@ class Login : AppCompatActivity() {
 
         return esValido // Devuelve true si todos los campos son válidos
     }
-
 
 
 }

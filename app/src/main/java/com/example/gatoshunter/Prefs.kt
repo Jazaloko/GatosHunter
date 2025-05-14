@@ -73,7 +73,4 @@ suspend fun SharedPreferences.getUserAsync(key: String): User? =
         }
     }
 
-class Prefs {
-
-
-}
+class Prefs

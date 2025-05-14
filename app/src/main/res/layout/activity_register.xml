@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:background="#D0D0D0"/>
+            android:background="#D0D0D0" />
 
         <!-- Segundo TextView -->
         <TextView
@@ -84,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:background="#D0D0D0"/>
+            android:background="#D0D0D0" />
 
         <!-- Segundo botón -->
         <Button
@@ -103,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/gatoregister"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp" />
 
     </LinearLayout>
 </LinearLayout>

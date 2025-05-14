@@ -8,9 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gatoshunter.clases.User
 import com.example.miapp.database.DatabaseHelper
-import kotlin.text.isNullOrBlank
-import kotlin.text.isNullOrEmpty
-import kotlin.text.trim
 
 class Register : AppCompatActivity() {
 
@@ -18,6 +15,7 @@ class Register : AppCompatActivity() {
     private lateinit var userName: EditText
     private lateinit var password: EditText
     private lateinit var registerButton: Button
+
     // private lateinit var volverAtras: Button // Si tienes un botón de volver atrás
     private lateinit var dbHelper: DatabaseHelper
 
@@ -40,7 +38,7 @@ class Register : AppCompatActivity() {
                     registrarUsuario()
                     finish()
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.e("Register", "Error al registrar", e)
             }
 
@@ -58,9 +56,14 @@ class Register : AppCompatActivity() {
 
         if (userNameEmpty && passwordEmpty) {
             // Ambos campos están vacíos
-            Toast.makeText(this, "Por favor, rellena el nombre de usuario y la contraseña.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Por favor, rellena el nombre de usuario y la contraseña.",
+                Toast.LENGTH_SHORT
+            ).show()
         } else if (userNameEmpty) {
-            Toast.makeText(this, "Por favor, rellena el nombre de usuario.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Por favor, rellena el nombre de usuario.", Toast.LENGTH_SHORT)
+                .show()
             esValido = false
         } else if (passwordEmpty) {
             Toast.makeText(this, "Por favor, rellena la contraseña.", Toast.LENGTH_SHORT).show()
@@ -82,7 +85,8 @@ class Register : AppCompatActivity() {
         dbHelper.insertarUsuario(usuario)
 
         // Ejemplo simple: mostrar un Toast de éxito
-        Toast.makeText(this, "Usuario $userName registrado exitosamente.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Usuario $userName registrado exitosamente.", Toast.LENGTH_SHORT)
+            .show()
     }
 
 

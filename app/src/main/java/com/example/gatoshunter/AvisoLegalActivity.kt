@@ -10,9 +10,9 @@ class AvisoLegalActivity : AppCompatActivity() {
         setContentView(R.layout.activity_aviso_legal)
         val volverButton = findViewById<Button>(R.id.buttonVolver)
 
-    // Al hacer clic, cerrar esta pantalla y volver atrás
-    volverButton.setOnClickListener {
-        finish()  // Esto vuelve al LoginActivity si fue quien abrió esta Activity
+        // Al hacer clic, cerrar esta pantalla y volver atrás
+        volverButton.setOnClickListener {
+            finish()  // Esto vuelve al LoginActivity si fue quien abrió esta Activity
+        }
     }
-}
 }

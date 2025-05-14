@@ -12,4 +12,6 @@
     <string name="nombre_del_comprador">Nombre del comprador</string>
     <string name="localidad_del_comprador">Localidad del comprador</string>
     <string name="vender_gato">Vender Gato</string>
+    <string name="imagen_del_gato">Imagen del Gato</string>
+    <string name="emocion_gato">Emocion del Gato</string>
 </resources>
