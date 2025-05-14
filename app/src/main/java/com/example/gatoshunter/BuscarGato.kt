@@ -2,8 +2,6 @@ package com.example.gatoshunter
 
 import TemporizadorMedianoche
 import android.annotation.SuppressLint
-import android.content.SharedPreferences
-import android.icu.util.Calendar
 import android.os.Bundle
 import android.os.Handler
 import android.widget.Button
@@ -13,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.miapp.database.DatabaseHelper
-import java.util.concurrent.TimeUnit
 
 class BuscarGato : AppCompatActivity() {
 
@@ -51,7 +48,7 @@ class BuscarGato : AppCompatActivity() {
         val buyButton: Button = findViewById(R.id.buybutton)
 
         //Timer
-        timerTextView = findViewById(R.id.Temporizador)
+        timerTextView = findViewById(R.id.temporizador)
 
         // Inicialización del RecyclerView
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
