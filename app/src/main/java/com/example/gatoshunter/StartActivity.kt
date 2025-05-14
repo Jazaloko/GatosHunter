@@ -2,6 +2,7 @@ package com.example.gatoshunter
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 
@@ -15,9 +16,13 @@ class StartActivity : AppCompatActivity() {
 
         startButton.setOnClickListener {
             // Redirigir a login
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish() // Opcional: Cierra la actividad de login
+            try {
+                val intent = Intent(this, Login::class.java)
+                Log.println(Log.INFO, "Login", "Login button clicked")
+                startActivity(intent)
+            } catch (e: Exception) {
+                Log.e("StartActivity", "Error al iniciar LoginActivity", e)
+            }
         }
     }
 }

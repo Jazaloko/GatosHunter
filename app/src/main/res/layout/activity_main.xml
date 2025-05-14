@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/white">
 
     <!-- Sección superior: Layout horizontal con imagen y botones -->
     <LinearLayout
@@ -22,14 +23,20 @@
 
             <!-- Imagen -->
             <ImageView
+                android:id="@+id/profileImageView"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_gravity="left"
+                android:src="@drawable/icon_gato1"
                 android:scaleType="centerCrop"
-                android:src="@drawable/icon_gato1" />
+                android:adjustViewBounds="true"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Imagen de perfil" />
 
             <!-- Primer TextView -->
             <TextView
+                android:id="@+id/textUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -40,6 +47,7 @@
 
             <!-- Segundo TextView -->
             <TextView
+                android:id="@+id/textDinero"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"

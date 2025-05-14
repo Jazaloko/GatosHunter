@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gatoshunter.clases.Gato
+import com.example.gatoshunter.clases.GatoAdapter
 import com.example.miapp.database.DatabaseHelper
 
 class BuscarGato : AppCompatActivity() {
@@ -31,11 +33,11 @@ class BuscarGato : AppCompatActivity() {
 
 
     private val gatos = listOf(
-        Gato(1, "Gato1", 4.5, "Ciudad A", "Gato muy juguetón"),
-        Gato(2, "Gato2", 3.2, "Ciudad B", "Gato tranquilo"),
-        Gato(3, "Gato3", 5.0, "Ciudad C", "Gato curioso"),
-        Gato(4, "Gato4", 3.2, "Ciudad D", "Gato tranquilo"),
-        Gato(5, "Gato5", 5.0, "Ciudad E", "Gato curioso")
+        Gato(1, "Gato1", 4.5, "Ciudad A", "Gato muy juguetón","Feli",null),
+        Gato(2, "Gato2", 3.2, "Ciudad B", "Gato tranquilo","Feli",null),
+        Gato(3, "Gato3", 5.0, "Ciudad C", "Gato curioso","Feli",null),
+        Gato(4, "Gato4", 3.2, "Ciudad D", "Gato tranquilo","Feli",null),
+        Gato(5, "Gato5", 5.0, "Ciudad E", "Gato curioso","Feli",null)
     )
 
     @SuppressLint("MissingInflatedId")

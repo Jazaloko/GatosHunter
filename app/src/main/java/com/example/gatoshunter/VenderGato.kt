@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gatoshunter.clases.Comprador
+import com.example.gatoshunter.clases.CompradorAdapter
 
 class VenderGato : AppCompatActivity() {
 
@@ -19,10 +21,10 @@ class VenderGato : AppCompatActivity() {
     private lateinit var timerTextView: TextView
 
     private val compradores = listOf(
-        Comprador(1, "Paco", "Las palmas"),
-        Comprador(2, "Pepe", "Telde"),
-        Comprador(3, "Pacote", "Las palmas"),
-        Comprador(4, "PePITO", "Telde")
+        Comprador(1, "Paco", 200.0,"Las palmas",null),
+        Comprador(2, "Pepe", 200.0,"Telde",null),
+        Comprador(3, "Pacote", 200.0,"Las palmas",null),
+        Comprador(4, "PePITO", 200.0,"Telde",null)
     )
 
     //Los compradores aleaorios al abrir la app
