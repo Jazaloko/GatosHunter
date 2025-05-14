@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FAFAFA"
+    android:padding="16dp">
+
+    <!-- Encabezado -->
+    <TextView
+        android:id="@+id/headerText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Aviso Legal"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#6200EE"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Scroll del contenido -->
+
+    <!-- Botón Volver -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/avisoLegalText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="8dp"
+            android:text="Fecha de última actualización: [15/05/2025]
+
+Bienvenido a Gatos Hunter, un juego móvil de entretenimiento cuyo objetivo principal es rescatar gatos virtuales en distintas situaciones dentro de un entorno lúdico e interactivo. Este aviso legal regula el uso del juego por parte del usuario, así como los derechos y obligaciones que corresponden tanto a los desarrolladores como a los jugadores.
+
+1. Titularidad
+Gatos Hunter es propiedad de [lYcorporation S.L.], con domicilio en [Las Palmas de California,China], y es responsable del contenido, desarrollo y mantenimiento de la aplicación. Todos los derechos reservados.
+
+2. Objeto del Juego
+El propósito de Gatos Hunter es proporcionar una experiencia de entretenimiento. Los gatos presentados son personajes ficticios. Cualquier parecido con animales reales es pura coincidencia. Este juego no representa una herramienta de adopción real ni un servicio veterinario o de rescate efectivo de animales.
+
+3. Uso Adecuado
+El usuario se compromete a utilizar la aplicación de manera adecuada, respetando las normas de convivencia, las leyes aplicables y los derechos de terceros. Está prohibido modificar, copiar, descompilar o manipular el contenido de la aplicación sin autorización expresa.
+
+4. Edad mínima
+Este juego está dirigido a un público general, pero se recomienda su uso a mayores de 7 años. Los padres o tutores deben supervisar el uso por parte de menores de edad.
+
+5. Publicidad y compras
+Gatos Hunter puede contener publicidad de terceros y/o compras dentro de la aplicación (in-app). El usuario es responsable de cualquier transacción realizada desde su cuenta. Nos reservamos el derecho de modificar los precios o contenido de las compras sin previo aviso.
+
+6. Protección de datos
+Gatos Hunter no recopila datos personales sensibles sin consentimiento expreso. Si se utilizan servicios externos (como anuncios o estadísticas), estos podrán emplear cookies o identificadores con fines analíticos o publicitarios. Para más información, revisa nuestra Política de Privacidad.
+
+7. Limitación de responsabilidad
+El desarrollador no se hace responsable por errores técnicos, pérdida de progreso del juego, interrupciones del servicio, ni por daños directos o indirectos derivados del uso o mal uso de la aplicación. El juego se ofrece “tal cual”, sin garantías de ningún tipo sobre su funcionamiento o resultados.
+
+8. Propiedad intelectual
+Todos los elementos gráficos, personajes, sonidos, interfaces y textos del juego son propiedad del desarrollador o cuentan con licencias de uso. Queda prohibida su reproducción o distribución sin autorización.
+
+9. Modificaciones
+El desarrollador se reserva el derecho a modificar este aviso legal en cualquier momento, sin previo aviso. Se recomienda al usuario revisar periódicamente esta sección para mantenerse informado sobre posibles cambios.
+
+10. Contacto
+Para cualquier consulta legal, sugerencia o solicitud relacionada con este aviso legal, puedes contactarnos a través del correo: [correo@ejemplo.com]."
+            android:textAlignment="viewStart"
+            android:textColor="#333333"
+            android:textSize="16sp" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/buttonVolver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Volver"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#6200EE"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
