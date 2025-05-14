@@ -1,10 +1,12 @@
 package com.example.gatoshunter.clases
+import android.graphics.Bitmap
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class User (
-    var id: Int?,
-    var nombre: String,
-    var password: String,
-    var dinero: Double,
+    val id: Int?,
+    val nombre: String,
+    val password: String,
+    val dinero: Double,
+    val img: String?
 )

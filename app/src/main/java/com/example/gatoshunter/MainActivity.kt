@@ -1,9 +1,13 @@
 package com.example.gatoshunter
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -12,17 +16,21 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.gatoshunter.clases.User
+import com.example.miapp.database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var profileImageView: ImageView
     private val PICK_IMAGE_REQUEST = 1
+    private lateinit var dbHelper: DatabaseHelper
     var textUser: TextView? = null
     var textDinero: TextView? = null
 
@@ -38,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         val button2: Button = findViewById(R.id.button2)
         textUser = findViewById(R.id.textUser)
         textDinero = findViewById(R.id.textDinero)
+        dbHelper = DatabaseHelper(this)
 
 
 
@@ -50,6 +59,11 @@ class MainActivity : AppCompatActivity() {
         button2.setOnClickListener {
             val intent = Intent(this, VenderGato::class.java)
             startActivity(intent)
+        }
+
+        profileImageView.setOnClickListener {
+            showImageSourceDialog()
+
         }
 
         try {
@@ -65,12 +79,11 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             val prefs = applicationContext.getAppSharedPreferences()
             val isLoggedIn = prefs.getBoolean("isLoggedIn", false)
-            var user: User? = null // Assuming User is the type returned by getUserAsync
+            var user: User? = null
 
             try {
                 user = prefs.getUserAsync("Usuario")
             } catch (e: Exception) {
-                // Handle the error, e.g., log it or show an error message
                 e.printStackTrace()
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@MainActivity, "Error loading user data", Toast.LENGTH_SHORT)
@@ -82,6 +95,7 @@ class MainActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     textUser?.text = user.nombre
                     textDinero?.text = "$${user.dinero}"
+                    loadProfileImage(user.img)
                 }
             } else {
                 withContext(Dispatchers.Main) {
@@ -91,6 +105,40 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    // Load the profile image into the ImageView
+    private fun loadProfileImage(imagePath: String?) {
+        if (imagePath.isNullOrEmpty()) {
+            // No image path stored, set a default image
+            profileImageView.setImageResource(R.drawable.character1) // Replace with your default
+            return
+        }
+
+        // Check if the path is for a drawable resource (e.g., "drawable/character1")
+        if (imagePath.startsWith("drawable/")) {
+            val resourceName = imagePath.substring("drawable/".length)
+            val resourceId = resources.getIdentifier(resourceName, "drawable", packageName)
+            if (resourceId != 0) {
+                profileImageView.setImageResource(resourceId)
+            } else {
+                // Resource not found, set default
+                profileImageView.setImageResource(R.drawable.character1)
+            }
+        } else {
+            // Assume it's a file path
+            val imageFile = File(imagePath)
+            if (imageFile.exists()) {
+                val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+                profileImageView.setImageBitmap(bitmap)
+            } else {
+                // File not found, set default and potentially clear the path in SharedPreferences/DB
+                profileImageView.setImageResource(R.drawable.character1)
+                Log.w("MainActivity", "Profile image file not found at: $imagePath")
+                // You might want to clear the invalid path here
+                // updateUserProfileImage(null)
+            }
+        }
     }
 
     // Diálogo para elegir entre galería o avatares
@@ -140,7 +188,76 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
             val selectedImageUri: Uri? = data?.data
             if (selectedImageUri != null) {
-                profileImageView.setImageURI(selectedImageUri)
+                try {
+                    // Cargar el Bitmap desde la Uri
+                    val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImageUri)
+
+                    // Mostrar la imagen seleccionada en el ImageView
+                    profileImageView.setImageBitmap(bitmap)
+
+                    // Guardar el Bitmap en un archivo y obtener la ruta
+                    val imagePath = saveBitmapToFile(this, bitmap)
+
+                    // Actualizar la información del usuario con la nueva ruta de la imagen
+                    updateUserProfileImage(imagePath)
+
+                } catch (e: IOException) {
+                    Log.e("MainActivity", "Error loading or saving image from gallery", e)
+                    Toast.makeText(this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    // Función auxiliar para guardar un Bitmap en un archivo y devolver la ruta
+    private fun saveBitmapToFile(context: Context, bitmap: Bitmap): String? {
+        val fileName = "profile_image_${UUID.randomUUID()}.png" // Nombre de archivo único
+        val imageFile = File(context.filesDir, fileName) // Guardar en almacenamiento interno
+
+        try {
+            val fos = FileOutputStream(imageFile)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos) // Comprimir y guardar
+            fos.close()
+            return imageFile.absolutePath // Devolver la ruta absoluta del archivo
+        } catch (e: IOException) {
+            Log.e("MainActivity", "Error saving bitmap to file", e)
+            return null
+        }
+    }
+
+    // Función para actualizar la ruta de la imagen de perfil del usuario
+    private fun updateUserProfileImage(newImagePath: String?) {
+
+        val prefs = applicationContext.getAppSharedPreferences()
+        var user: User?
+
+        // Actualizar en SharedPreferences y en la base de datos (en un Coroutine)
+        lifecycleScope.launch(Dispatchers.IO) {
+            user = prefs.getUserAsync("Usuario")
+
+            // Creamos una copia del usuario con la nueva ruta de imagen
+            user = user?.copy(img = newImagePath)
+
+            try {
+
+                //Actualizar en SharedPreferences
+                val editor = prefs.edit()
+                editor.putUserAsync("Usuario", user!!) // Usamos !! aquí porque ya verificamos que currentUser no es null
+
+                //Actualizar en la base de datos SQLite
+                if (user?.id != null) {
+                    dbHelper.updateUsuario(user!!)
+                } else {
+                    Log.w("MainActivity", "User ID es null")
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@MainActivity, "No se pudo actualizar la imagen en la base de datos (ID nulo)", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error actualizando la imagen en la base de datos o en SharedPreferences", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivity, "Error al guardar la imagen de perfil", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

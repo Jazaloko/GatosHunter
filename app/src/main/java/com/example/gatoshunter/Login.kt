@@ -17,6 +17,8 @@ import kotlinx.coroutines.withContext
 class Login : AppCompatActivity() {
 
     private lateinit var dbHelper: DatabaseHelper
+    private lateinit var userName: EditText
+    private lateinit var password: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,11 +26,10 @@ class Login : AppCompatActivity() {
 
         val loginButton: Button = findViewById(R.id.buttonLogin)
         val registerButton: Button = findViewById(R.id.buttonRegister)
-        val userName: EditText = findViewById(R.id.userName)
-        val password: EditText = findViewById(R.id.password)
+        val politicaButton: Button = findViewById(R.id.buttonPolitica)
+        userName = findViewById(R.id.userName)
+        password = findViewById(R.id.password)
         dbHelper = DatabaseHelper(this)
-
-        Log.d("Login", "onCreate called")
 
         //Funcion para redirigir a la pagina de Registrar
         registerButton.setOnClickListener {
@@ -41,7 +42,7 @@ class Login : AppCompatActivity() {
             val intent = Intent(this, AvisoLegalActivity::class.java)
             startActivity(intent)
         }
-        val politicaButton = findViewById<Button>(R.id.buttonPolitica)
+
 
         // Acción al hacer clic en el botón
         politicaButton.setOnClickListener {
@@ -53,9 +54,7 @@ class Login : AppCompatActivity() {
 
         loginButton.setOnClickListener {
             //Mandar a verificar los datos del login, en caso correcto, redirigir al MainActivity, en caso contrario, Salte mensaje de error
-            if (userName.text.isNullOrEmpty() || userName.text.isNullOrBlank() && password.text.isNullOrBlank() || userName.text.isNullOrEmpty()){
-                //Mostrar un mensaje de error por que faltan datos
-            } else {
+            if (validarCampos()){
                 lifecycleScope.launch(Dispatchers.IO){
                     val (userFound, user) = dbHelper.checkUserAndGetUser(userName.text.toString(), password.text.toString())
 
@@ -76,12 +75,35 @@ class Login : AppCompatActivity() {
                             }
 
                         } else {
-                            // Mostrar un mensaje de error
+                            Toast.makeText(this@Login, "El usuario no existe o la contraseña es incorrecta", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun validarCampos(): Boolean {
+        var esValido = false
+
+        // Validar ambos campos
+        val userNameEmpty = userName.text.isNullOrEmpty() || userName.text.isNullOrBlank()
+        val passwordEmpty = password.text.isNullOrEmpty() || password.text.isNullOrBlank()
+
+        if (userNameEmpty && passwordEmpty) {
+            // Ambos campos están vacíos
+            Toast.makeText(this, "Por favor, rellena el nombre de usuario y la contraseña.", Toast.LENGTH_SHORT).show()
+        } else if (userNameEmpty) {
+            Toast.makeText(this, "Por favor, rellena el nombre de usuario.", Toast.LENGTH_SHORT).show()
+            esValido = false
+        } else if (passwordEmpty) {
+            Toast.makeText(this, "Por favor, rellena la contraseña.", Toast.LENGTH_SHORT).show()
+            esValido = false
+        } else {
+            esValido = true
+        }
+
+        return esValido // Devuelve true si todos los campos son válidos
     }
 
 

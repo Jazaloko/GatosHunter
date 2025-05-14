@@ -92,7 +92,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:background="#D0D0D0"/>
+            android:background="#D0D0D0"
+            android:inputType="textPassword"/>
 
         <!-- Botón "Has olvidado la contraseña" -->
         <Button

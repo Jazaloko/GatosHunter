@@ -6,5 +6,6 @@ data class Gato(
     var peso: Double,
     var localidad: String,
     var descripcion: String,
-    var emocion: String
+    var emocion: String,
+    var img: String?
 )

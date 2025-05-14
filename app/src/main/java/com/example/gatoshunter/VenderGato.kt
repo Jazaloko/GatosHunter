@@ -29,8 +29,8 @@ class VenderGato : AppCompatActivity() {
 
         // Lista de compradores inicial
         val compradores = listOf(
-            Comprador(1, "Paco", 200.0, "Ciudad A"),
-            Comprador(2, "Pepe", 300.0, "Ciudad B")
+            Comprador(1, "Paco", 200.0, "Ciudad A", null),
+            Comprador(2, "Pepe", 300.0, "Ciudad B", null)
         )
 
         // Configuración del adaptador
