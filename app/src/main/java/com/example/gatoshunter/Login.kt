@@ -36,6 +36,21 @@ class Login : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val buttonAvisoLegal = findViewById<Button>(R.id.buttonAvisoLegal)
+        buttonAvisoLegal.setOnClickListener {
+            val intent = Intent(this, AvisoLegalActivity::class.java)
+            startActivity(intent)
+        }
+        val politicaButton = findViewById<Button>(R.id.buttonPolitica)
+
+        // Acción al hacer clic en el botón
+        politicaButton.setOnClickListener {
+            // Abre la actividad de la política de juego
+            val intent = Intent(this, PoliticaLegalActivity::class.java)
+            startActivity(intent)
+        }
+
+
         loginButton.setOnClickListener {
             //Mandar a verificar los datos del login, en caso correcto, redirigir al MainActivity, en caso contrario, Salte mensaje de error
             if (userName.text.isNullOrEmpty() || userName.text.isNullOrBlank() && password.text.isNullOrBlank() || userName.text.isNullOrEmpty()){

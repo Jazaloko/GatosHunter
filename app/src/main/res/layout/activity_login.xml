@@ -49,10 +49,10 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Nuevo LinearLayout (debajo de los anteriores) -->
+    <!-- Nuevo LinearLayout (contenedor principal inferior) -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="#EEEEEE"
         android:orientation="vertical"
         android:padding="16dp">
@@ -74,6 +74,7 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:background="#D0D0D0"/>
+
         <!-- Segundo TextView -->
         <TextView
             android:layout_width="wrap_content"
@@ -83,6 +84,7 @@
             android:text="Introduzca la Contraseña:"
             android:textColor="#000000"
             android:textSize="14sp" />
+
         <!-- Segundo EditText -->
         <EditText
             android:id="@+id/password"
@@ -91,21 +93,25 @@
             android:padding="5dp"
             android:background="#D0D0D0"/>
 
+        <!-- Botón "Has olvidado la contraseña" -->
         <Button
             android:id="@+id/buttonLost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Has olvidado la contraseña"
             android:textColor="#000000"
-            android:background="@android:color/transparent" android:padding="12dp"
+            android:background="@android:color/transparent"
+            android:padding="12dp"
             android:textStyle="normal"
             android:textAllCaps="false" />
 
+        <!-- Contenedor de botones principales -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Botón Iniciar Sesión -->
             <Button
                 android:id="@+id/buttonLogin"
                 android:layout_width="match_parent"
@@ -115,6 +121,7 @@
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF" />
 
+            <!-- Separador con texto "o" -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -142,12 +149,9 @@
                     android:layout_height="1dp"
                     android:layout_weight="1"
                     android:background="#000000" />
-
             </LinearLayout>
 
-
-
-            <!-- Segundo botón -->
+            <!-- Botón Registrarse -->
             <Button
                 android:id="@+id/buttonRegister"
                 android:layout_width="match_parent"
@@ -158,10 +162,55 @@
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF" />
 
-        </LinearLayout>
-        <!-- Primer botón -->
-
+            <!-- NUEVO: Imagen y botón en una fila -->
+            </LinearLayout>
 
     </LinearLayout>
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="16dp"
+        android:padding="16dp">
 
+        <!-- Imagen de gato a la izquierda -->
+        <ImageView
+            android:id="@+id/imageGatoInicio"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/gatoinicio"
+            android:contentDescription="Imagen de Gato de Inicio"
+            android:layout_marginEnd="16dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop" />
+
+        <!-- Botones en vertical a la derecha -->
+        <LinearLayout
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/buttonPolitica"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Política de Juego"
+                android:textAllCaps="false"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/buttonAvisoLegal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/transparent"
+                android:text="Aviso Legal"
+                android:textAllCaps="false"
+                android:textColor="#000000" />
+        </LinearLayout>
+    </LinearLayout>
+
+        <!-- Botón Aviso Legal -->
+    </LinearLayout>

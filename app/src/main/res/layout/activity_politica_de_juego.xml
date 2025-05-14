@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FAFAFA"
+    android:padding="16dp">
+
+    <!-- Encabezado -->
+    <TextView
+        android:id="@+id/headerText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Política de Juego"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#6200EE"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Botón Volver -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- Contenido principal -->
+        <TextView
+            android:id="@+id/textPolitica"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bienvenido a Gatos Hunter, un juego creado con el objetivo de entretener, educar y promover el cuidado responsable de los animales, especialmente los gatos. Al utilizar esta aplicación, aceptas las condiciones de uso descritas a continuación. Esta política de juego tiene como finalidad garantizar una experiencia segura, respetuosa y justa para todos los jugadores.
+
+1. Comportamiento del jugador
+Todos los jugadores deben comportarse de manera respetuosa. Se prohíbe cualquier forma de acoso, amenazas, lenguaje ofensivo o actitud que pueda incomodar a otros usuarios. Aunque el juego está diseñado para un solo jugador, cualquier comportamiento derivado del uso del mismo (por ejemplo, en comunidades online, redes sociales u otros foros relacionados) deberá mantener el mismo estándar de respeto y cordialidad.
+
+2. Contenido del juego
+Gatos Hunter incluye elementos visuales, personajes y entornos diseñados exclusivamente para fines de entretenimiento. Cualquier parecido con personas reales, situaciones reales o animales reales es pura coincidencia. Todos los elementos del juego, incluyendo imágenes, textos, sonidos y diseño, están protegidos por derechos de autor. Está prohibida la reproducción, distribución o modificación del contenido sin autorización expresa de los desarrolladores.
+
+3. Acceso y cuentas
+El juego puede requerir la creación de una cuenta o sesión de usuario para guardar el progreso. Los datos proporcionados deben ser veraces. Los jugadores son responsables de la seguridad de su cuenta y de mantener la confidencialidad de sus credenciales. No se permite la suplantación de identidad ni el uso de cuentas ajenas.
+
+4. Progresión y recompensas
+El progreso del jugador se basa en el desempeño dentro del juego, completando niveles y misiones de rescate de gatos. No se permite el uso de software externo, trampas (cheats), bots o cualquier método que altere el funcionamiento original del juego. Detectar este tipo de comportamiento puede derivar en la suspensión o eliminación de la cuenta.
+
+5. Publicidad y compras integradas
+Gatos Hunter puede incluir anuncios o compras integradas. Todos los elementos adquiribles son opcionales y no obligatorios para avanzar. En caso de compras realizadas por error, el usuario deberá contactar al proveedor correspondiente (Google Play o App Store). Los desarrolladores no se responsabilizan por compras no autorizadas realizadas por menores u otras personas.
+
+6. Protección de datos
+Cualquier información personal proporcionada será tratada de acuerdo con nuestra Política de Privacidad. No compartimos tus datos con terceros sin consentimiento. El juego puede almacenar información como nombre de usuario, progreso, configuración y preferencias del jugador con el único fin de mejorar la experiencia de juego.
+
+7. Modificaciones
+Esta política puede ser actualizada en cualquier momento. Las actualizaciones serán notificadas dentro de la aplicación o en nuestros canales oficiales. Te recomendamos revisarla periódicamente.
+
+8. Contacto
+Para dudas, sugerencias o reporte de errores, puedes escribirnos al correo de soporte que aparece en la sección de configuración del juego.
+
+Gracias por jugar a Gatos Hunter. ¡Disfruta rescatando gatitos mientras juegas con responsabilidad!"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:lineSpacingExtra="4dp" />
+</ScrollView>
+
+    <Button
+    android:id="@+id/buttonVolverPolitica"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Volver"
+    android:textAllCaps="false"
+    android:textColor="#FFFFFF"
+    android:backgroundTint="#6200EE"
+    android:layout_gravity="center"
+    android:layout_marginTop="16dp" />
+    </LinearLayout>
+
