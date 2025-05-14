@@ -46,14 +46,20 @@ class Login : AppCompatActivity() {
 
                     withContext(Dispatchers.Main) {
                         if (userFound) {
-                            val prefs = applicationContext.getAppSharedPreferences()
-                            prefs.putBooleanAsync("isLoggedIn", true) // Guardar estado de login
-                            prefs.putIntAsync("loggedInUserId", user!!.id!!) // Usar !! con precaución si estás seguro de que no es null
+                            try {
+                                val prefs = applicationContext.getAppSharedPreferences()
+                                val editor = prefs.edit()
+                                prefs.putBooleanAsync("isLoggedIn", true) // Guardar estado de login
+                                editor.putUserAsync("Usuario", user!!)
 
-                            Toast.makeText(this@Login, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this@Login, MainActivity::class.java)
-                            startActivity(intent)
-                            finish()
+                                Toast.makeText(this@Login, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this@Login, MainActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            } catch (e : Exception) {
+                                Log.e("Login", "Error al colocar datos del usuario", e)
+                            }
+
                         } else {
                             // Mostrar un mensaje de error
                         }

@@ -2,8 +2,10 @@ package com.example.gatoshunter
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.gatoshunter.clases.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import java.lang.reflect.Array
 
 // Nombre del archivo de SharedPreferences
@@ -44,6 +46,31 @@ suspend fun SharedPreferences.putBooleanAsync(key: String, value: Boolean) =
 suspend fun SharedPreferences.getBooleanAsync(key: String, defaultValue: Boolean = false): Boolean =
     withContext(Dispatchers.IO) {
         getBoolean(key, defaultValue)
+    }
+
+// Función de extensión para guardar un objeto User de forma asíncrona
+suspend fun SharedPreferences.Editor.putUserAsync(key: String, user: User) =
+    withContext(Dispatchers.IO) {
+        val jsonString = Json.encodeToString(user)
+        putString(key, jsonString) // Guarda la cadena JSON en SharedPreferences
+        apply() // Aplica los cambios de forma asíncrona
+    }
+
+// Función de extensión para recuperar un objeto User de forma asíncrona
+suspend fun SharedPreferences.getUserAsync(key: String): User? =
+    withContext(Dispatchers.IO) {
+        val jsonString = getString(key, null) // Recupera la cadena JSON
+        if (jsonString != null) {
+            try {
+                Json.decodeFromString<User>(jsonString) // Deserializa la cadena JSON a un objeto User
+            } catch (e: Exception) {
+                // Manejar errores de deserialización (por ejemplo, si el formato JSON es incorrecto)
+                e.printStackTrace()
+                null // Devolver null si hay un error al deserializar
+            }
+        } else {
+            null // Devolver null si la clave no existe o el valor es null
+        }
     }
 
 class Prefs {
