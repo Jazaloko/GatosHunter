@@ -28,6 +28,8 @@
         <activity android:name=".VenderGato" android:exported="true" />
         <activity android:name=".Login" android:exported="true" />
         <activity android:name=".Register" android:exported="true" />
-    </application>
+        <activity android:name=".AvisoLegalActivity" />
+        <activity android:name=".PoliticaLegalActivity" />
+   </application>
 
 </manifest>
