@@ -99,15 +99,15 @@ class VenderGato : AppCompatActivity() {
     }
 
     private fun guardarcompradoresMostradosEnPrefs(ids: List<Int>) {
-        val prefs = getSharedPreferences("GatosPrefs", MODE_PRIVATE)
+        val prefs = getSharedPreferences("CompradoresPrefs", MODE_PRIVATE)
         val editor = prefs.edit()
-        editor.putString("gatos_ids", ids.joinToString(","))
+        editor.putString("compradores_ids", ids.joinToString(","))
         editor.apply()
     }
 
     private fun cargarcompradoresMostradosDePrefs(): List<Comprador>? {
-        val prefs = getSharedPreferences("GatosPrefs", MODE_PRIVATE)
-        val idsString = prefs.getString("gatos_ids", null) ?: return null
+        val prefs = getSharedPreferences("CompradoresPrefs", MODE_PRIVATE)
+        val idsString = prefs.getString("compradores_ids", null) ?: return null
         val ids = idsString.split(",").mapNotNull { it.toIntOrNull() }
 
         return compradores.filter { it.id in ids }

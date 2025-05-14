@@ -13,16 +13,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.GatosHunter">
-        <activity
-            android:name=".StartActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"> <activity
+        android:name=".StartActivity"
+        android:exported="true"> <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+    </activity>
         <activity android:name=".MainActivity" android:exported="true" />
         <activity android:name=".BuscarGato" android:exported="true" />
         <activity android:name=".VenderGato" android:exported="true" />
@@ -30,6 +28,6 @@
         <activity android:name=".Register" android:exported="true" />
         <activity android:name=".AvisoLegalActivity" />
         <activity android:name=".PoliticaLegalActivity" />
-   </application>
+    </application>
 
 </manifest>
