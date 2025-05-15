@@ -1,6 +1,6 @@
 package com.example.gatoshunter
 
-import TemporizadorMedianoche
+
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
