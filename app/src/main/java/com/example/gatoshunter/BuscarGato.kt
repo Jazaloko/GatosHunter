@@ -1,6 +1,6 @@
 package com.example.gatoshunter
 
-import android.annotation.SuppressLint
+import TemporizadorMedianoche
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.os.Handler
@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gatoshunter.clases.Gato
 import com.example.gatoshunter.clases.GatoAdapter
-import com.example.gatoshunter.clases.MainAdapter
 import com.example.miapp.database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,15 +44,31 @@ class BuscarGato : AppCompatActivity() {
         dbHelper = DatabaseHelper(this)
 
         //Timer
-        timerTextView = findViewById(R.id.Temporizador)
+        timerTextView = findViewById(R.id.temporizador)
 
         // Inicialización del RecyclerView
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
-        val data = dbHelper.obtenerGatosLibres()
+
         // Configuración del adaptador
-        adapter = GatoAdapter(data)
+        var data = dbHelper.obtenerGatosLibres()
+
+        if (data == null) {
+            //Mostrar un mensaje de que ha rescatado a todos los gatos
+        } else {
+            data = data.shuffled().take(3)
+            guardarGatosMostradosEnPrefs(data.map { it.id!! })
+        }
+
+        data = cargarGatosMostradosDePrefs()!!
+        if (data == null) {
+            //Mostrar un mensaje de que ha rescatado a todos los gatos
+        }
+
+
+
+        adapter = GatoAdapter(data.shuffled().take(3))
         recyclerView.adapter = adapter
 
         // Configurar las acciones de los botones
@@ -85,13 +100,22 @@ class BuscarGato : AppCompatActivity() {
             }
         }
 
+        val temporizador = TemporizadorMedianoche(timerTextView) {
+            // Acción que se ejecuta a medianoche
+            // Por ejemplo: recargar lista, resetear contador, etc.
+            updateRecyclerViewData()
+        }
+
+        // Inicia o restaura el temporizador
+        temporizador.iniciar()
     }
 
     // Simula la actualización de datos del RecyclerView
     private fun updateRecyclerViewData() {
         // Obtén nuevos datos aquí (puede venir de una API o base de datos)
         val newData = dbHelper.obtenerGatosLibres()
-        adapter.actualizarLista(newData) // Actualiza el adaptador con los nuevos datos
+        guardarGatosMostradosEnPrefs(newData.map { it.id!! })
+        adapter.actualizarLista(newData.shuffled().take(3)) // Actualiza el adaptador con los nuevos datos
     }
 
 
@@ -143,6 +167,21 @@ class BuscarGato : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         startMidnightCountdown() // Lo reinicia al volver
+    }
+
+    private fun guardarGatosMostradosEnPrefs(ids: List<Int>) {
+        val prefs = getSharedPreferences("GatosPrefs", MODE_PRIVATE)
+        val editor = prefs.edit()
+        editor.putString("gatos_ids", ids.joinToString(","))
+        editor.apply()
+    }
+
+    private fun cargarGatosMostradosDePrefs(): List<Gato>? {
+        val prefs = getSharedPreferences("GatosPrefs", MODE_PRIVATE)
+        val idsString = prefs.getString("gatos_ids", null) ?: return null
+        val ids = idsString.split(",").mapNotNull { it.toIntOrNull() }
+        val newData = dbHelper.obtenerGatosLibres()
+        return newData.filter { it.id in ids }
     }
 
 
