@@ -4,4 +4,6 @@
     <item name="localidadTextView" type="id" />
     <item name="descripcionTextView" type="id" />
     <item name="nombreTextView" type="id" />
+    <item name="textUser" type="id" />
+    <item name="textDinero" type="id" />
 </resources>
