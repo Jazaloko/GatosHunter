@@ -12,7 +12,7 @@ import com.example.gatoshunter.clases.Gato
 import com.example.gatoshunter.clases.User
 
 private const val DATABASE_NAME = "Gatos_Hunter.db"
-private const val DATABASE_VERSION = 6
+private const val DATABASE_VERSION = 7
 
 class DatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -79,6 +79,7 @@ class DatabaseHelper(context: Context) :
             "$COLUMN_DINERO REAL, " +
             "$COLUMN_LOCALIDAD TEXT, " +
             "$COLUMN_IMG_PATH TEXT)"
+
 
     //Crear tablas
     override fun onCreate(db: SQLiteDatabase) {
@@ -408,12 +409,68 @@ class DatabaseHelper(context: Context) :
 
     }
 
+    fun obtenerCompradores(): List<Comprador>{
+
+        val db = readableDatabase
+        val listaComprador = mutableListOf<Comprador>()
+
+        val projection = arrayOf(
+            COLUMN_ID,
+            COLUMN_NOMBRE,
+            COLUMN_DINERO,
+            COLUMN_IMG_PATH,
+            COLUMN_LOCALIDAD,
+
+        )
+
+        val cursor: Cursor = db.query(
+            TABLE_COMPRADORES,   // La tabla a consultar
+            projection,       // Las columnas a devolver
+            null,        // Las columnas para la cláusula WHERE
+            null,    // Los valores para la cláusula WHERE
+            null,     // No agrupar las filas
+            null,      // No filtrar por grupos de filas
+            null      // El orden de clasificación
+        )
+
+        // Procesar el Cursor
+        cursor.use { // Usa 'use' para asegurar que el cursor se cierre automáticamente
+            // Obtener los índices de las columnas
+            val idIndex = it.getColumnIndexOrThrow(COLUMN_ID)
+            val nombreIndex = it.getColumnIndexOrThrow(COLUMN_NOMBRE)
+            val localidadIndex = it.getColumnIndexOrThrow(COLUMN_LOCALIDAD)
+            val imgPathIndex = it.getColumnIndexOrThrow(COLUMN_IMG_PATH)
+            val dineroIndex = it.getColumnIndexOrThrow(COLUMN_DINERO)
+
+            // Iterar sobre las filas del cursor
+            while (it.moveToNext()) {
+                // Leer los datos de la fila actual usando los índices de las columnas
+                val id = it.getInt(idIndex)
+                val nombre = it.getString(nombreIndex)
+                val localidad = it.getString(localidadIndex)
+                val dinero = it.getDouble(dineroIndex)
+                val imgPath = it.getString(imgPathIndex) // Puede ser null si la columna permite nulls
+
+                // Crear un objeto Gato con los datos de la fila
+                val comprador = Comprador(id, nombre, dinero, localidad, imgPath)
+
+                // Agregar el objeto Gato a la lista
+                listaComprador.add(comprador)
+            }
+        }
+
+        db.close() // Cierra la conexión a la base de datos
+
+        return listaComprador
+
+    }
+
     fun actualizarNombreGato(id: Int, nuevoNombre: String) {
         val db = writableDatabase
         val values = ContentValues().apply {
-            put("name", nuevoNombre)
+            put(COLUMN_NOMBRE, nuevoNombre)
         }
-        db.update("GatosUser", values, "idGato = ?", arrayOf(id.toString()))
+        db.update(TABLE_GATOS_USER, values, "id = ?", arrayOf(id.toString()))
 
     }
 
