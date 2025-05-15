@@ -12,7 +12,7 @@ import com.example.gatoshunter.clases.Gato
 import com.example.gatoshunter.clases.User
 
 private const val DATABASE_NAME = "Gatos_Hunter.db"
-private const val DATABASE_VERSION = 6
+private const val DATABASE_VERSION = 7
 
 class DatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
