@@ -1,117 +1,163 @@
 package com.example.gatoshunter
 
-
-import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gatoshunter.clases.Comprador
 import com.example.gatoshunter.clases.CompradorAdapter
+import com.example.miapp.database.DatabaseHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class VenderGato : AppCompatActivity() {
 
-    // Adaptador para el RecyclerView
+    private lateinit var dbHelper: DatabaseHelper // dbHelper is used now
+
     private lateinit var adapter: CompradorAdapter
-
-    // Temporizador
     private lateinit var timerTextView: TextView
+    private lateinit var temporizadorMedianoche: TemporizadorMedianoche
 
-    private val compradores = listOf(
-        Comprador(1, "Paco", 200.0,"Las palmas",null),
-        Comprador(2, "Pepe", 200.0,"Telde",null),
-        Comprador(3, "Pacote", 200.0,"Las palmas",null),
-        Comprador(4, "PePITO", 200.0,"Telde",null)
-    )
+    private var currentDailyBuyersList: List<Comprador> = emptyList()
 
-    //Los compradores aleaorios al abrir la app
-    private var compradoresMostrados: List<Comprador>? = null
+    private val COMPRADORES_PREFS_NAME = "CompradoresDiariosPrefs"
+    private val KEY_COMPRADOR_IDS = "comprador_ids_daily"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.vender_gatos)
 
-        // Inicialización de los botones
         val backButton: Button = findViewById(R.id.backbutton)
         val sellButton: Button = findViewById(R.id.sellbutton)
-
-        //Timer
         timerTextView = findViewById(R.id.temporizador)
 
-        // Inicialización del RecyclerView
+        dbHelper = DatabaseHelper(this)
+
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
 
-        if (compradoresMostrados == null) {
-            compradoresMostrados = compradores.shuffled().take(3)
-        }
 
-        compradoresMostrados = cargarcompradoresMostradosDePrefs()
-        if (compradoresMostrados == null) {
-            compradoresMostrados = compradores.shuffled().take(3)
-            guardarcompradoresMostradosEnPrefs(compradoresMostrados!!.map { it.id!! })
-        }
-        // Configuración del adaptador
-        adapter = CompradorAdapter(compradoresMostrados!!)
-        recyclerView.adapter = adapter
-
-
-        // Configurar las acciones de los botones
-        backButton.setOnClickListener {
-            finish() // Vuelve a la actividad anterior
-        }
-
-        sellButton.setOnClickListener {
-            if (adapter.selectedItemId != null) {
-                val idSeleccionado = adapter.selectedItemId!!
-
-                // Eliminar el gato de la lista visible
-                adapter.eliminarComprador(idSeleccionado)
-                adapter.selectedItemId = null
-            } else {
-                Toast.makeText(this, "Selecciona un comprador primero", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch(Dispatchers.IO) {
+            currentDailyBuyersList = loadOrCreateDailyBuyers()
+            withContext(Dispatchers.Main) {
+                // Initialize adapter on the main thread
+                adapter = CompradorAdapter(currentDailyBuyersList)
+                recyclerView.adapter = adapter
             }
         }
-        val temporizador = TemporizadorMedianoche(timerTextView) {
-            // Acción que se ejecuta a medianoche
-            // Por ejemplo: recargar lista, resetear contador, etc.
-            updateRecyclerViewData()
+
+        //Botone
+        backButton.setOnClickListener { finish() }
+
+        sellButton.setOnClickListener { resolverVenta() }
+
+        // Timer
+        temporizadorMedianoche = TemporizadorMedianoche(timerTextView) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                updateRecyclerViewData()
+            }
         }
-        // Inicia o restaura el temporizador
-        temporizador.iniciar()
-    }
-    // Simula la actualización de datos del RecyclerView
-    private fun updateRecyclerViewData() {
-        // Obtén nuevos datos aquí (puede venir de una API o base de datos)
-        compradoresMostrados = compradores.shuffled().take(3)
-        guardarcompradoresMostradosEnPrefs(compradoresMostrados!!.map { it.id!! })
-        adapter.actualizarLista(compradoresMostrados!!)
+        temporizadorMedianoche.iniciar()
     }
 
-    // Genera datos simulados
-    private fun fetchNewData(): List<Comprador> {
-        return compradores.shuffled().take(3)
+    //Cargar compradores diarios
+    private fun loadOrCreateDailyBuyers(): List<Comprador> {
+        val savedBuyerIds = cargarCompradoresDiarios()
+        val allPotentialBuyers = dbHelper.obtenerCompradores()
+
+        return if (savedBuyerIds.isNotEmpty()) {
+            val dailyBuyers = allPotentialBuyers.filter { it.id in savedBuyerIds }
+            if (dailyBuyers.size < 3) {
+                Log.w("VenderGato", "Less than 3 daily buyers found from saved IDs. Refreshing...")
+                selectAndSaveNewDailyBuyers(allPotentialBuyers) // Select new ones if saved list is incomplete
+            } else {
+                dailyBuyers
+            }
+        } else {
+            selectAndSaveNewDailyBuyers(allPotentialBuyers)
+        }
     }
 
-    private fun guardarcompradoresMostradosEnPrefs(ids: List<Int>) {
-        val prefs = getSharedPreferences("CompradoresPrefs", MODE_PRIVATE)
-        val editor = prefs.edit()
-        editor.putString("compradores_ids", ids.joinToString(","))
-        editor.apply()
+    // Helper function to select 3 random buyers and save their IDs
+    private fun selectAndSaveNewDailyBuyers(allPotentialBuyers: List<Comprador>): List<Comprador> {
+        val selectedBuyers = allPotentialBuyers.shuffled().take(3)
+        val selectedBuyerIds = selectedBuyers.mapNotNull { it.id }
+        guardarCompradoresDiarios(selectedBuyerIds)
+        return selectedBuyers
     }
 
-    private fun cargarcompradoresMostradosDePrefs(): List<Comprador>? {
-        val prefs = getSharedPreferences("CompradoresPrefs", MODE_PRIVATE)
-        val idsString = prefs.getString("compradores_ids", null) ?: return null
-        val ids = idsString.split(",").mapNotNull { it.toIntOrNull() }
 
-        return compradores.filter { it.id in ids }
+    // Guardar los compradores del dia
+    private fun guardarCompradoresDiarios(ids: List<Int>) {
+        val prefs = getSharedPreferences(COMPRADORES_PREFS_NAME, MODE_PRIVATE)
+        prefs.edit().putString(KEY_COMPRADOR_IDS, ids.joinToString(",")).apply()
     }
-    
-    
 
+    // Cargar los compradores del dia
+    private fun cargarCompradoresDiarios(): List<Int> {
+        val prefs = getSharedPreferences(COMPRADORES_PREFS_NAME, MODE_PRIVATE)
+        val idsString = prefs.getString(KEY_COMPRADOR_IDS, null)
+        return if (idsString.isNullOrEmpty()) {
+            emptyList()
+        } else {
+            try {
+                idsString.split(",").mapNotNull { it.toIntOrNull() }
+            } catch (e: Exception) {
+                Log.e("VenderGato", "Error parsing comprador_ids_daily from SharedPreferences", e)
+                emptyList()
+            }
+        }
+    }
+
+    // Resetear Compradores a media noche
+    private suspend fun updateRecyclerViewData() {
+        val allPotentialBuyers = dbHelper.obtenerCompradores() // Get ALL potential buyers from DB
+        val nuevosCompradores = selectAndSaveNewDailyBuyers(allPotentialBuyers) // Select new ones and save IDs
+
+        withContext(Dispatchers.Main) {
+            currentDailyBuyersList = nuevosCompradores // Actualizar la lista
+            Toast.makeText(this@VenderGato, "¡Medianoche alcanzada! Recargando compradores...", Toast.LENGTH_SHORT).show()
+            adapter.actualizarLista(currentDailyBuyersList) // Actualizar adapter
+            adapter.selectedItemId = null // Deselect any previous buyer
+        }
+    }
+
+
+    // Modified selling logic using the activity's currentDailyBuyersList
+    private fun resolverVenta() {
+        val compradorSeleccionadoId = adapter.selectedItemId // Get ID from adapter
+        if (compradorSeleccionadoId != null) {
+
+            val compradorSeleccionado = currentDailyBuyersList.find { it.id == compradorSeleccionadoId }
+
+            if (compradorSeleccionado != null) {
+                // Now we have the Comprador object with its details (like name)
+                Log.d("VenderGato", "Selected buyer: ${compradorSeleccionado.nombre}")
+
+                // Remove buyer from adapter's visible list (UI update)
+                adapter.eliminarComprador(compradorSeleccionadoId)
+                adapter.selectedItemId = null // Deselect
+
+                // Also update the activity's list to keep it in sync for future sales in this session
+                // This prevents finding a buyer that has just been "sold" within the same day's list.
+                currentDailyBuyersList = currentDailyBuyersList.filter { it.id != compradorSeleccionadoId }
+
+                // Use the fetched buyer's name in the Toast
+                Toast.makeText(this, "Comprador ${compradorSeleccionado.nombre} se ha ido.", Toast.LENGTH_SHORT).show()
+
+            } else {
+                Log.e("VenderGato", "Comprador with ID $compradorSeleccionadoId not found in activity's current daily list.")
+                Toast.makeText(this, "Error: Comprador no encontrado en la lista actual.", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "Selecciona un comprador primero", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
