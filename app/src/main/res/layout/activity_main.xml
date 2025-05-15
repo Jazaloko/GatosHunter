@@ -32,7 +32,9 @@
                 android:layout_marginEnd="16dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:contentDescription="Imagen de perfil" />
+                android:contentDescription="Imagen de perfil"
+                android:textStyle="bold"
+                android:background="@drawable/border_textview"/>
 
             <!-- Primer TextView -->
             <TextView
@@ -43,7 +45,9 @@
                 android:gravity="center"
                 android:text="Nombre Usuario"
                 android:textColor="#808080"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:background="@drawable/border_textview"/>
 
             <!-- Segundo TextView -->
             <TextView
@@ -53,7 +57,8 @@
                 android:gravity="center"
                 android:text="$xxx"
                 android:textColor="#000000"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:background="@drawable/border_textview"/>
         </LinearLayout>
 
         <!-- Sección de botones -->
