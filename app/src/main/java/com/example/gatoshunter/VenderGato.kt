@@ -30,7 +30,6 @@ class VenderGato : AppCompatActivity() {
     //Los compradores aleaorios al abrir la app
     private var compradoresMostrados: List<Comprador>? = null
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.vender_gatos)
@@ -54,7 +53,7 @@ class VenderGato : AppCompatActivity() {
         compradoresMostrados = cargarcompradoresMostradosDePrefs()
         if (compradoresMostrados == null) {
             compradoresMostrados = compradores.shuffled().take(3)
-            guardarcompradoresMostradosEnPrefs(compradoresMostrados!!.map { it.id })
+            guardarcompradoresMostradosEnPrefs(compradoresMostrados!!.map { it.id!! })
         }
         // Configuración del adaptador
         adapter = CompradorAdapter(compradoresMostrados!!)
@@ -89,7 +88,7 @@ class VenderGato : AppCompatActivity() {
     private fun updateRecyclerViewData() {
         // Obtén nuevos datos aquí (puede venir de una API o base de datos)
         compradoresMostrados = compradores.shuffled().take(3)
-        guardarcompradoresMostradosEnPrefs(compradoresMostrados!!.map { it.id })
+        guardarcompradoresMostradosEnPrefs(compradoresMostrados!!.map { it.id!! })
         adapter.actualizarLista(compradoresMostrados!!)
     }
 
