@@ -81,7 +81,7 @@
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:backgroundTint="#6200EE"
-            android:text="@string/comprar_gato"
+            android:text="Rescatar Gato"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="18sp"

@@ -174,4 +174,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return Pair(userFound, user) // Devuelve true si se encontró al menos una fila, false en caso contrario
     }
 
+    fun actualizarNombreGato(id: Int, nuevoNombre: String) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("name", nuevoNombre)
+        }
+        db.update("GatosUser", values, "idGato = ?", arrayOf(id.toString()))
+
+    }
+
+
 }

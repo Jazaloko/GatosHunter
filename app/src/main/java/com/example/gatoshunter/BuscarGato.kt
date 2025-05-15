@@ -5,6 +5,7 @@ import android.icu.util.Calendar
 import android.os.Bundle
 import android.os.Handler
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit
 
 class BuscarGato : AppCompatActivity() {
 
+<<<<<<< Updated upstream
     // Base de datos
 
     // Adaptador para el RecyclerView
@@ -24,31 +26,42 @@ class BuscarGato : AppCompatActivity() {
     // Temporizador
 //    private val timerDuration = 10 * 60 * 1000L // 10 minutos en milisegundos
 //    private lateinit var sharedPreferences: SharedPreferences
+=======
+    private lateinit var dbHelper: DatabaseHelper
+    private lateinit var adapter: GatoAdapter
+>>>>>>> Stashed changes
     private lateinit var timerTextView: TextView
-
-    // Handler y Runnable para actualización en tiempo real
     private val handler = Handler()
+<<<<<<< Updated upstream
 //    private var startTime = 0L // Guardar el tiempo de inicio del temporizador
 //    private var elapsedTime = 0L // Tiempo transcurrido desde que el temporizador empezó
 //    private var remainingTime = timerDuration // Tiempo restante del temporizador
+=======
+    private var ultimoGatoCompradoId: Int? = null
+>>>>>>> Stashed changes
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.buscar_gatos)
 
-        // Inicialización de los botones
         val backButton: Button = findViewById(R.id.backbutton)
         val buyButton: Button = findViewById(R.id.buybutton)
+<<<<<<< Updated upstream
 
         //Timer
         timerTextView = findViewById(R.id.Temporizador)
+=======
+        timerTextView = findViewById(R.id.temporizador)
+>>>>>>> Stashed changes
 
-        // Inicialización del RecyclerView
+        dbHelper = DatabaseHelper(this)
+
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
 
+<<<<<<< Updated upstream
         // Lista de gatos inicial
         val gatos = listOf(
             Gato(1, "Gato1", 4.5, "Ciudad A", "Gato muy juguetón", "Feliz"),
@@ -67,11 +80,25 @@ class BuscarGato : AppCompatActivity() {
 //        remainingTime = timerDuration - elapsedTime // Calcular el tiempo restante
 
         // Configurar las acciones de los botones
+=======
+        var data = dbHelper.obtenerGatosLibres()
+        if (data != null) {
+            data = data.shuffled().take(3)
+            guardarGatosMostradosEnPrefs(data.map { it.id!! })
+        }
+
+        data = cargarGatosMostradosDePrefs() ?: emptyList()
+
+        adapter = GatoAdapter(data.shuffled().take(3))
+        recyclerView.adapter = adapter
+
+>>>>>>> Stashed changes
         backButton.setOnClickListener {
-            finish() // Vuelve a la actividad anterior
+            finish()
         }
 
         buyButton.setOnClickListener {
+<<<<<<< Updated upstream
             if (adapter.selectedItemId != null) {
                 val idSeleccionado = adapter.selectedItemId!!
 
@@ -175,6 +202,91 @@ class BuscarGato : AppCompatActivity() {
             Gato(5, "Nuevo Gato 2", 4.1, "Ciudad E", "Amante de los abrazos", "Triste")
         )
     }
+=======
+            resolverCompra()
+        }
+    }
+
+    private fun resolverCompra() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val prefs = applicationContext.getAppSharedPreferences()
+            val user = prefs.getUserAsync("Usuario")
+
+            if (adapter.selectedItemId != null) {
+                val gatoSeleccionado = adapter.getGatoSeleccionado()
+                dbHelper.insertarGatoUser(gatoSeleccionado!!, user!!)
+                dbHelper.eliminarGatoLibre(gatoSeleccionado.id!!)
+
+                ultimoGatoCompradoId = gatoSeleccionado.id
+
+                runOnUiThread {
+                    adapter.eliminarGato(gatoSeleccionado.id!!)
+                    adapter.selectedItemId = null
+                    mostrarDialogoExito()
+                }
+            } else {
+                runOnUiThread {
+                    Toast.makeText(this@BuscarGato, "Selecciona un gato primero", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        val temporizador = TemporizadorMedianoche(timerTextView) {
+            updateRecyclerViewData()
+        }
+        temporizador.iniciar()
+    }
+
+    private fun mostrarDialogoExito() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_compra_exitosa, null)
+
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<Button>(R.id.btnAceptar).setOnClickListener {
+            dialog.dismiss()
+            mostrarDialogoNombreGato()
+        }
+
+        dialog.show()
+    }
+
+    private fun mostrarDialogoNombreGato() {
+        val input = EditText(this).apply {
+            hint = "Ej: Pelusa"
+            setPadding(50, 40, 50, 40)
+        }
+
+        android.app.AlertDialog.Builder(this)
+            .setTitle("Ponle un nombre a tu gato")
+            .setView(input)
+            .setCancelable(false)
+            .setPositiveButton("Guardar") { d, _ ->
+                val nuevoNombre = input.text.toString().trim()
+                if (nuevoNombre.isNotEmpty() && ultimoGatoCompradoId != null) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        dbHelper.actualizarNombreGato(ultimoGatoCompradoId!!, nuevoNombre)
+                    }
+                    Toast.makeText(this, "¡Nombre guardado!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Nombre no válido", Toast.LENGTH_SHORT).show()
+                }
+                d.dismiss()
+            }
+            .show()
+    }
+
+    private fun updateRecyclerViewData() {
+        val newData = dbHelper.obtenerGatosLibres()
+        guardarGatosMostradosEnPrefs(newData.map { it.id!! })
+        adapter.actualizarLista(newData.shuffled().take(3))
+    }
+
+>>>>>>> Stashed changes
     private fun getMillisUntilMidnight(): Long {
         val now = Calendar.getInstance()
         val midnight = Calendar.getInstance().apply {
@@ -183,7 +295,7 @@ class BuscarGato : AppCompatActivity() {
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-            add(Calendar.DAY_OF_YEAR, 1) // Nos movemos al próximo día a las 00:00
+            add(Calendar.DAY_OF_YEAR, 1)
         }
         return midnight.timeInMillis - now.timeInMillis
     }
@@ -192,15 +304,13 @@ class BuscarGato : AppCompatActivity() {
         handler.post(object : Runnable {
             override fun run() {
                 val millisRemaining = getMillisUntilMidnight()
-
                 if (millisRemaining > 0) {
                     updateTimerText(millisRemaining)
-                    handler.postDelayed(this, 1000) // Repite cada segundo
+                    handler.postDelayed(this, 1000)
                 } else {
-                    // Medianoche alcanzada
                     timerTextView.text = "Tiempo restante: 00:00:00"
-                    updateRecyclerViewData() // Aquí puedes actualizar tu lista de gatos
-                    handler.postDelayed(this, 1000) // Reiniciar para el nuevo día
+                    updateRecyclerViewData()
+                    handler.postDelayed(this, 1000)
                 }
             }
         })
@@ -216,15 +326,25 @@ class BuscarGato : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        handler.removeCallbacksAndMessages(null) // Detiene el temporizador
+        handler.removeCallbacksAndMessages(null)
     }
 
     override fun onResume() {
         super.onResume()
-        startMidnightCountdown() // Lo reinicia al volver
+        startMidnightCountdown()
     }
 
 
+<<<<<<< Updated upstream
 
 
+=======
+    private fun cargarGatosMostradosDePrefs(): List<Gato>? {
+        val prefs = getSharedPreferences("GatosPrefs", MODE_PRIVATE)
+        val idsString = prefs.getString("gatos_ids", null) ?: return null
+        val ids = idsString.split(",").mapNotNull { it.toIntOrNull() }
+        val newData = dbHelper.obtenerGatosLibres()
+        return newData.filter { it.id in ids }
+    }
+>>>>>>> Stashed changes
 }

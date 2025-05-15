@@ -3,7 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+<<<<<<< Updated upstream
     android:padding="16dp">
+=======
+    android:padding="16dp"
+    android:background="@drawable/backgroundmain">
+>>>>>>> Stashed changes
 
     <!-- Sección superior: Layout horizontal con imagen y botones -->
     <LinearLayout
@@ -21,19 +26,51 @@
             android:orientation="vertical">
 
             <!-- Imagen -->
-            <ImageView
-                android:id="@+id/profileImageView"
+            <FrameLayout
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/icon_gato1"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
                 android:layout_marginEnd="16dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:contentDescription="Imagen de perfil" />
+                android:background="@color/white"
+                android:padding="3dp">
+
+                <ImageView
+                    android:id="@+id/profileImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/icon_gato1"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Imagen de perfil" />
+            </FrameLayout>
+
+                <TextView
+                    android:id="@+id/textUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="Nombre Usuario"
+                    android:textColor="#808080"
+                    android:textSize="14sp"
+                    android:background="@drawable/border_textview"/>
+
+                <TextView
+                    android:id="@+id/textDinero"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="$xxx"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:background="@drawable/border_textview"/>
+
+
+        </LinearLayout>
 
             <!-- Primer TextView -->
+<<<<<<< Updated upstream
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,6 +89,8 @@
                 android:textColor="#000000"
                 android:textSize="16sp" />
         </LinearLayout>
+=======
+>>>>>>> Stashed changes
 
         <!-- Sección de botones -->
         <LinearLayout
