@@ -408,4 +408,14 @@ class DatabaseHelper(context: Context) :
 
     }
 
+    fun actualizarNombreGato(id: Int, nuevoNombre: String) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("name", nuevoNombre)
+        }
+        db.update("GatosUser", values, "idGato = ?", arrayOf(id.toString()))
+
+    }
+
+
 }

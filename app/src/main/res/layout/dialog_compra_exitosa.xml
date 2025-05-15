@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/backgroundmain"
+    android:gravity="center"
+    android:layout_gravity="center">
+
+    <ImageView
+        android:layout_width="365dp"
+        android:layout_height="562dp"
+        android:layout_gravity="center"
+        android:src="@drawable/rescate2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¡Has adoptado un gato!"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:background="@drawable/border_textview" />
+
+    <Button
+        android:id="@+id/btnAceptar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aceptar"
+        android:layout_marginTop="12dp" />
+</LinearLayout>
