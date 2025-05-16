@@ -12,7 +12,7 @@ import com.example.gatoshunter.clases.Gato
 import com.example.gatoshunter.clases.User
 
 private const val DATABASE_NAME = "Gatos_Hunter.db"
-private const val DATABASE_VERSION = 7
+private const val DATABASE_VERSION = 9
 
 class DatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -120,9 +120,25 @@ class DatabaseHelper(context: Context) :
         // Insertar Compradores iniciales
         val comprador1 = Comprador(null, "Mercader Errante", 2000.0, "Bosque", null)
         val comprador2 = Comprador(null, "Anciano Sabio", 1500.0, "Montaña", null)
+        val comprador3 = Comprador(null, "Pepe", 1000.0, "Desierto", null)
+        val comprador4 = Comprador(null, "Juan", 1200.0, "Ciudad", null)
+        val comprador5 = Comprador(null, "Maria", 1800.0, "Pueblo", null)
+        val comprador6 = Comprador(null, "Luis", 1300.0, "Lago", null)
+        val comprador7 = Comprador(null, "Ana", 1600.0, "Playa", null)
+        val comprador8 = Comprador(null, "Carlos", 1100.0, "Ciudad", null)
+        val comprador9 = Comprador(null, "Laura", 1400.0, "Montaña", null)
+        val comprador10 = Comprador(null, "Pedro", 1700.0, "Bosque", null)
 
         insertarCompradorInicial(db, comprador1)
         insertarCompradorInicial(db, comprador2)
+        insertarCompradorInicial(db, comprador3)
+        insertarCompradorInicial(db, comprador4)
+        insertarCompradorInicial(db, comprador5)
+        insertarCompradorInicial(db, comprador6)
+        insertarCompradorInicial(db, comprador7)
+        insertarCompradorInicial(db, comprador8)
+        insertarCompradorInicial(db, comprador9)
+        insertarCompradorInicial(db, comprador10)
     }
 
     // Funciones auxiliares para insertar datos en onCreate (usan la instancia de db proporcionada)
