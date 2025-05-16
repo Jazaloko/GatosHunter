@@ -29,6 +29,8 @@ class VenderGato : AppCompatActivity() {
     private val COMPRADORES_PREFS_NAME = "CompradoresDiariosPrefs"
     private val KEY_COMPRADOR_IDS = "comprador_ids_daily"
 
+    private var buyersLoadedForDay = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.vender_gatos)
@@ -73,15 +75,26 @@ class VenderGato : AppCompatActivity() {
         val allPotentialBuyers = dbHelper.obtenerCompradores()
 
         return if (savedBuyerIds.isNotEmpty()) {
+            // If there are saved IDs, load ONLY those buyers from the database
             val dailyBuyers = allPotentialBuyers.filter { it.id in savedBuyerIds }
-            if (dailyBuyers.size < 3) {
-                Log.w("VenderGato", "Less than 3 daily buyers found from saved IDs. Refreshing...")
-                selectAndSaveNewDailyBuyers(allPotentialBuyers) // Select new ones if saved list is incomplete
-            } else {
-                dailyBuyers
+            if (dailyBuyers.size != savedBuyerIds.size) {
+                Log.w("VenderGato", "Mismatch between saved IDs count (${savedBuyerIds.size}) and found buyers count (${dailyBuyers.size}).")
             }
+            buyersLoadedForDay = true // Mark that buyers have been loaded for today
+            dailyBuyers // Return the buyers found based on saved IDs
         } else {
-            selectAndSaveNewDailyBuyers(allPotentialBuyers)
+            // If no saved IDs, check if we've already loaded buyers today
+            if (!buyersLoadedForDay) {
+                // If not loaded today, select 3 new buyers (start of day or first run)
+                val selectedBuyers = selectAndSaveNewDailyBuyers(allPotentialBuyers)
+                buyersLoadedForDay = true // Mark that buyers have been created for today
+                selectedBuyers
+            } else {
+                // If saved IDs were empty, but we already loaded buyers today,
+                // it means all buyers were sold. Return an empty list.
+                Log.d("VenderGato", "Saved buyer IDs list is empty, and buyers were already loaded today. Returning empty list.")
+                emptyList()
+            }
         }
     }
 
@@ -122,10 +135,11 @@ class VenderGato : AppCompatActivity() {
         val nuevosCompradores = selectAndSaveNewDailyBuyers(allPotentialBuyers) // Select new ones and save IDs
 
         withContext(Dispatchers.Main) {
-            currentDailyBuyersList = nuevosCompradores // Actualizar la lista
+            currentDailyBuyersList = nuevosCompradores // Actualizar la lista in-memory
             Toast.makeText(this@VenderGato, "¡Medianoche alcanzada! Recargando compradores...", Toast.LENGTH_SHORT).show()
             adapter.actualizarLista(currentDailyBuyersList) // Actualizar adapter
             adapter.selectedItemId = null // Deselect any previous buyer
+            buyersLoadedForDay = true // Reset the flag for the new day
         }
     }
 
@@ -138,8 +152,18 @@ class VenderGato : AppCompatActivity() {
             val compradorSeleccionado = currentDailyBuyersList.find { it.id == compradorSeleccionadoId }
 
             if (compradorSeleccionado != null) {
-                // Now we have the Comprador object with its details (like name)
                 Log.d("VenderGato", "Selected buyer: ${compradorSeleccionado.nombre}")
+
+
+                val currentSavedIds = cargarCompradoresDiarios().toMutableList() // Load current saved IDs
+                if (currentSavedIds.remove(compradorSeleccionadoId)) { // Attempt to remove the ID from the list
+                    guardarCompradoresDiarios(currentSavedIds) // Save the updated list back to SharedPreferences
+                    Log.d("VenderGato", "Removed buyer ID $compradorSeleccionadoId from SharedPreferences.")
+                } else {
+                    Log.w("VenderGato", "Buyer ID $compradorSeleccionadoId not found in SharedPreferences list.")
+                }
+
+
 
                 // Remove buyer from adapter's visible list (UI update)
                 adapter.eliminarComprador(compradorSeleccionadoId)
