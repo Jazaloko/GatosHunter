@@ -132,32 +132,37 @@ class VenderGato : AppCompatActivity() {
 
     // Modified selling logic using the activity's currentDailyBuyersList
     private fun resolverVenta() {
-        val compradorSeleccionadoId = adapter.selectedItemId // Get ID from adapter
+        val compradorSeleccionadoId = adapter.selectedItemId
         if (compradorSeleccionadoId != null) {
-
             val compradorSeleccionado = currentDailyBuyersList.find { it.id == compradorSeleccionadoId }
 
             if (compradorSeleccionado != null) {
-                // Now we have the Comprador object with its details (like name)
-                Log.d("VenderGato", "Selected buyer: ${compradorSeleccionado.nombre}")
+                val dialogView = layoutInflater.inflate(R.layout.dialog_venta_completada, null)
 
-                // Remove buyer from adapter's visible list (UI update)
-                adapter.eliminarComprador(compradorSeleccionadoId)
-                adapter.selectedItemId = null // Deselect
+                val builder = android.app.AlertDialog.Builder(this)
+                    .setView(dialogView)
 
-                // Also update the activity's list to keep it in sync for future sales in this session
-                // This prevents finding a buyer that has just been "sold" within the same day's list.
-                currentDailyBuyersList = currentDailyBuyersList.filter { it.id != compradorSeleccionadoId }
+                val dialog = builder.create()
 
-                // Use the fetched buyer's name in the Toast
-                Toast.makeText(this, "Comprador ${compradorSeleccionado.nombre} se ha ido.", Toast.LENGTH_SHORT).show()
+                val mensaje = dialogView.findViewById<TextView>(R.id.mensajeVenta)
+                val btnAceptar = dialogView.findViewById<Button>(R.id.btnAceptarVenta)
 
+                mensaje.text = "Has vendido un gato a ${compradorSeleccionado.nombre}"
+
+                btnAceptar.setOnClickListener {
+                    adapter.eliminarComprador(compradorSeleccionadoId)
+                    adapter.selectedItemId = null
+                    currentDailyBuyersList = currentDailyBuyersList.filter { it.id != compradorSeleccionadoId }
+                    dialog.dismiss()
+                }
+
+                dialog.show()
             } else {
-                Log.e("VenderGato", "Comprador with ID $compradorSeleccionadoId not found in activity's current daily list.")
-                Toast.makeText(this, "Error: Comprador no encontrado en la lista actual.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error: Comprador no encontrado.", Toast.LENGTH_SHORT).show()
             }
         } else {
             Toast.makeText(this, "Selecciona un comprador primero", Toast.LENGTH_SHORT).show()
         }
     }
+
 }
