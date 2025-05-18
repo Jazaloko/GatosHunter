@@ -70,7 +70,7 @@ class BuscarGato : AppCompatActivity() {
             lifecycleScope.launch(Dispatchers.IO) { // Perform DB operations on IO thread
                 // Lógica para recargar los gatos:
                 val allFreeCats = dbHelper.obtenerGatosLibres() // Get ALL free cats
-                val nuevosGatos = allFreeCats.shuffled().take(3) // Select 3 random from current free cats
+                val nuevosGatos = allFreeCats.shuffled().take(5) // Select 3 random from current free cats
                 val nuevosGatoIds = nuevosGatos.mapNotNull { it.id }
 
                 // Save the new daily cat IDs (overwriting previous ones)

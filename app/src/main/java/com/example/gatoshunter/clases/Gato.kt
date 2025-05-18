@@ -9,5 +9,5 @@ data class Gato(
     var localidad: String,
     var descripcion: String,
     var emocion: String,
-    var img: String?
+    var img: Int?
 ): Serializable

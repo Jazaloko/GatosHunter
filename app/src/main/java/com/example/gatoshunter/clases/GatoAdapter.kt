@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gatoshunter.R
@@ -22,6 +23,7 @@ class GatoAdapter(private var listaGatos: List<Gato>) :
         val localidad: TextView = itemView.findViewById(R.id.localidadGato) // Localidad del gato
         val descripcion: TextView =
             itemView.findViewById(R.id.descripcionGato) // Descripción del gato
+        val img: ImageView = itemView.findViewById(R.id.imgGato)
     }
 
     // Método para crear y devolver un ViewHolder que contiene el layout de cada ítem del RecyclerView
@@ -41,6 +43,9 @@ class GatoAdapter(private var listaGatos: List<Gato>) :
         holder.localidad.text = gato.localidad
         holder.descripcion.text = gato.descripcion
 
+        // Mostrar la imagen del gato (suponiendo que gato.img es un entero de recurso drawable)
+        gato.img?.let { holder.img.setImageResource(it) }
+
         // Cambiar el color de fondo del ítem seleccionado
         holder.itemView.setBackgroundColor(
             if (gato.id == selectedItemId) { // Si este gato es el seleccionado, cambiar el color
@@ -52,8 +57,7 @@ class GatoAdapter(private var listaGatos: List<Gato>) :
 
         // Cuando el ítem es tocado, cambia el estado de selección
         holder.itemView.setOnClickListener {
-            val previosPosition =
-                selectedItemId // Guardamos la posición anterior del gato seleccionado
+            val previosPosition = selectedItemId // Guardamos la posición anterior del gato seleccionado
             selectedItemId = gato.id // Actualizamos el gato seleccionado
 
             // Notificamos que los ítems han cambiado para actualizar la UI correctamente
@@ -61,6 +65,7 @@ class GatoAdapter(private var listaGatos: List<Gato>) :
             notifyItemChanged(position) // Notificamos que el ítem actual debe actualizarse para reflejar la selección
         }
     }
+
 
     // Método para actualizar la lista de gatos en el adaptador
     fun actualizarLista(nuevaLista: List<Gato>) {

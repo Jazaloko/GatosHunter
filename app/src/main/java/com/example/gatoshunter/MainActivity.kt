@@ -92,6 +92,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun mostrarDialogoGato(gato: Gato) {
         val mensaje = """
+            ${gato.img}
             🐱 Nombre: ${gato.nombre}
             🏠 Localidad: ${gato.localidad}
             ⚖️ Peso: ${gato.peso} kg
@@ -125,7 +126,7 @@ class MainActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     textUser?.text = user.nombre
                     textDinero?.text = "$${user.dinero}"
-                    loadProfileImage(user.img)
+                    loadProfileImage(user.img)  // Aquí img es Int
                 }
             } else {
                 withContext(Dispatchers.Main) {
@@ -135,31 +136,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadProfileImage(imagePath: String?) {
-        if (imagePath.isNullOrEmpty()) {
-            profileImageView.setImageResource(R.drawable.character1)
+    private fun loadProfileImage(imageResId: Int?) {
+        if (imageResId == null || imageResId == 0) {
+            profileImageView.setImageResource(R.drawable.character1) // imagen por defecto
             return
         }
 
-        if (imagePath.startsWith("drawable/")) {
-            val resourceName = imagePath.substring("drawable/".length)
-            val resourceId = resources.getIdentifier(resourceName, "drawable", packageName)
-            if (resourceId != 0) {
-                profileImageView.setImageResource(resourceId)
-            } else {
-                profileImageView.setImageResource(R.drawable.character1)
-            }
-        } else {
-            val imageFile = File(imagePath)
-            if (imageFile.exists()) {
-                val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-                profileImageView.setImageBitmap(bitmap)
-            } else {
-                profileImageView.setImageResource(R.drawable.character1)
-                Log.w("MainActivity", "Profile image file not found at: $imagePath")
-            }
-        }
+        profileImageView.setImageResource(imageResId)
     }
+
 
     private fun showImageSourceDialog() {
         val options = arrayOf("Elegir de la galería", "Seleccionar avatar predeterminado")
@@ -202,18 +187,10 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
-            val selectedImageUri: Uri? = data?.data
-            if (selectedImageUri != null) {
-                try {
-                    val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImageUri)
-                    profileImageView.setImageBitmap(bitmap)
-                    val imagePath = saveBitmapToFile(this, bitmap)
-                    updateUserProfileImage(imagePath)
-                } catch (e: IOException) {
-                    Log.e("MainActivity", "Error loading or saving image from gallery", e)
-                    Toast.makeText(this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show()
-                }
-            }
+            // En vez de cargar imagen de galería, asignamos un drawable fijo
+            val drawableId = R.drawable.character1 // Ejemplo: drawable fijo
+            profileImageView.setImageResource(drawableId)
+            updateUserProfileImage(drawableId)
         }
     }
 
@@ -232,13 +209,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateUserProfileImage(newImagePath: String?) {
+    private fun updateUserProfileImage(newImageResId: Int?) {
         val prefs = applicationContext.getAppSharedPreferences()
         var user: User?
 
         lifecycleScope.launch(Dispatchers.IO) {
             user = prefs.getUserAsync("Usuario")
-            user = user?.copy(img = newImagePath)
+            user = user?.copy(img = newImageResId)
 
             try {
                 val editor = prefs.edit()
@@ -259,4 +236,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 }

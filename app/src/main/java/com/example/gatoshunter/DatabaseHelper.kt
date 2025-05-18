@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import androidx.fragment.app.add
+import com.example.gatoshunter.R
 import com.example.gatoshunter.clases.Comprador
 import com.example.gatoshunter.clases.Gato
 import com.example.gatoshunter.clases.User
@@ -17,7 +18,7 @@ private const val DATABASE_VERSION = 9
 class DatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
-    //Base de datos, Nombre de las tablas, Campos de las tablas
+    // Base de datos, Nombre de las tablas, Campos de las tablas
     companion object {
         const val TABLE_GATOS = "Gatos"
         const val TABLE_GATOS_USER = "GatosUser"
@@ -36,13 +37,13 @@ class DatabaseHelper(context: Context) :
         const val COLUMN_IMG_PATH = "Img_Path"
     }
 
-    //Secuencia SQL para crear las tablas
+    // Secuencia SQL para crear las tablas con Img_Path como INTEGER
     private val CREATE_TABLE_USUARIOS = "CREATE TABLE $TABLE_USUARIOS (" +
             "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "$COLUMN_NOMBRE TEXT UNIQUE, " +
             "$COLUMN_PASSWORD TEXT," +
             "$COLUMN_DINERO REAL, " +
-            "$COLUMN_IMG_PATH TEXT)"
+            "$COLUMN_IMG_PATH INTEGER)"
 
     private val CREATE_TABLE_GATOS = "CREATE TABLE $TABLE_GATOS (" +
             "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -51,7 +52,7 @@ class DatabaseHelper(context: Context) :
             "$COLUMN_LOCALIDAD TEXT, " +
             "$COLUMN_DESCRIPCION TEXT," +
             "$COLUMN_EMOCION TEXT, " +
-            "$COLUMN_IMG_PATH TEXT)"
+            "$COLUMN_IMG_PATH INTEGER)"
 
     private val CREATE_TABLE_GATOS_LIBRE = "CREATE TABLE $TABLE_GATOS_LIBRES (" +
             "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -60,7 +61,7 @@ class DatabaseHelper(context: Context) :
             "$COLUMN_LOCALIDAD TEXT, " +
             "$COLUMN_DESCRIPCION TEXT," +
             "$COLUMN_EMOCION TEXT, " +
-            "$COLUMN_IMG_PATH TEXT)"
+            "$COLUMN_IMG_PATH INTEGER)"
 
     private val CREATE_TABLE_GATOS_USER = "CREATE TABLE $TABLE_GATOS_USER (" +
             "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -69,7 +70,7 @@ class DatabaseHelper(context: Context) :
             "$COLUMN_LOCALIDAD TEXT, " +
             "$COLUMN_DESCRIPCION TEXT," +
             "$COLUMN_EMOCION TEXT, " +
-            "$COLUMN_IMG_PATH TEXT, " +
+            "$COLUMN_IMG_PATH INTEGER, " +
             "$COLUMN_USER_ID INTEGER, " +
             "FOREIGN KEY($COLUMN_USER_ID) REFERENCES $TABLE_USUARIOS($COLUMN_ID))"
 
@@ -78,7 +79,7 @@ class DatabaseHelper(context: Context) :
             "$COLUMN_NOMBRE TEXT, " +
             "$COLUMN_DINERO REAL, " +
             "$COLUMN_LOCALIDAD TEXT, " +
-            "$COLUMN_IMG_PATH TEXT)"
+            "$COLUMN_IMG_PATH INTEGER)"
 
 
     //Crear tablas
@@ -95,16 +96,16 @@ class DatabaseHelper(context: Context) :
 
     private fun insertarDatosIniciales(db: SQLiteDatabase) {
         // Insertar Usuarios iniciales
-        val Gato1 = Gato(null, "Gato1", 4.5, "Ciudad A", "Gato muy juguetón", "Feliz", null) // ID nulo para autoincremento
-        val Gato2 = Gato(null, "Gato2", 3.2, "Ciudad B", "Gato tranquilo", "Triste", null)
-        val Gato3 = Gato(null, "Gato3", 5.0, "Ciudad C", "Gato curioso", "Encantado", null)
-        val Gato4 = Gato(null, "Gato4", 4.8, "Ciudad D", "Muy sociable", "Encantado", null)
-        val Gato5 = Gato(null, "Gato5", 4.1, "Ciudad E", "Amante de los respectivos", "Triste", null)
-        val Gato6 = Gato(null, "Gato6", 3.5, "Ciudad F", "Le gusta dormir", "Tranquilo", null)
-        val Gato7 = Gato(null, "Gato7", 5.2, "Ciudad G", "Un gato amigable", "Feliz", null)
-        val Gato8 = Gato(null, "Gato8", 4.9, "Ciudad H", "Le encanta jugar", "Encantado", null)
-        val Gato9 = Gato(null, "Gato9", 4.3, "Ciudad I", "Le encanta dormir", "Tranquilo", null)
-        val Gato10 = Gato(null, "Gato10", 4.7, "Ciudad J", "Le encanta comer", "Tranquilo", null)
+        val Gato1 = Gato(null, "Gato1", 4.5, "Ciudad A", "Gato muy juguetón", "Feliz", R.drawable.gato1) // ID nulo para autoincremento
+        val Gato2 = Gato(null, "Gato2", 3.2, "Ciudad B", "Gato tranquilo", "Triste", R.drawable.gato2)
+        val Gato3 = Gato(null, "Gato3", 5.0, "Ciudad C", "Gato curioso", "Encantado", R.drawable.gatos3)
+        val Gato4 = Gato(null, "Gato4", 4.8, "Ciudad D", "Muy sociable", "Encantado", R.drawable.gatos4)
+        val Gato5 = Gato(null, "Gato5", 4.1, "Ciudad E", "Amante de los respectivos", "Triste", R.drawable.gato5)
+        val Gato6 = Gato(null, "Gato6", 3.5, "Ciudad F", "Le gusta dormir", "Tranquilo", R.drawable.gato6)
+        val Gato7 = Gato(null, "Gato7", 5.2, "Ciudad G", "Un gato amigable", "Feliz", R.drawable.gato7)
+        val Gato8 = Gato(null, "Gato8", 4.9, "Ciudad H", "Le encanta jugar", "Encantado", R.drawable.gato8)
+        val Gato9 = Gato(null, "Gato9", 4.3, "Ciudad I", "Le encanta dormir", "Tranquilo", R.drawable.gato9)
+        val Gato10 = Gato(null, "Gato10", 4.7, "Ciudad J", "Le encanta comer", "Tranquilo", R.drawable.gato10)
 
         insertarGatoInicial(db, Gato1)
         insertarGatoInicial(db, Gato2)
@@ -172,9 +173,9 @@ class DatabaseHelper(context: Context) :
         db.execSQL("DROP TABLE IF EXISTS $TABLE_COMPRADORES")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_GATOS_USER")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_GATOS_LIBRES")
+
         onCreate(db)
     }
-
     //================================= INSERTAR DATOS =========================================
 
     //Insertar Usuario
@@ -214,6 +215,8 @@ class DatabaseHelper(context: Context) :
         val db = writableDatabase
         db.delete(TABLE_GATOS_LIBRES, "$COLUMN_ID = ?", arrayOf(id.toString()))
     }
+
+
 
     //================================= ACTUALIZAR DATOS =========================================
 
@@ -285,12 +288,12 @@ class DatabaseHelper(context: Context) :
                 val nombre = it.getString(nombreIndex)
                 val pwd = it.getString(passwordIndex)
                 val dinero = it.getDouble(dineroIndex)
-                val img = it.getString(imgIndex)
+                val img = it.getInt(imgIndex) // Importante: getInt para Img_Path
 
                 user = User(id, nombre, pwd, dinero, img)
-                true // Devuelve true si se encontró el usuario
+                true
             } else {
-                false // Devuelve false si no se encontró
+                false
             }
         } ?: false
 
@@ -348,10 +351,10 @@ class DatabaseHelper(context: Context) :
                 val localidad = it.getString(localidadIndex)
                 val descripcion = it.getString(descripcionIndex)
                 val emocion = it.getString(emocionIndex)
-                val imgPath = it.getString(imgPathIndex) // Puede ser null si la columna permite nulls
+                val imgResId = if (!it.isNull(imgPathIndex)) it.getInt(imgPathIndex) else null
 
                 // Crear un objeto Gato con los datos de la fila
-                val gato = Gato(id, nombre, peso, localidad, descripcion, emocion, imgPath)
+                val gato = Gato(id, nombre, peso, localidad, descripcion, emocion, imgResId)
 
                 // Agregar el objeto Gato a la lista
                 listaGatos.add(gato)
@@ -409,15 +412,16 @@ class DatabaseHelper(context: Context) :
                 val localidad = it.getString(localidadIndex)
                 val descripcion = it.getString(descripcionIndex)
                 val emocion = it.getString(emocionIndex)
-                val imgPath = it.getString(imgPathIndex) // Puede ser null si la columna permite nulls
+                val imgResId = if (!it.isNull(imgPathIndex)) it.getInt(imgPathIndex) else null
 
                 // Crear un objeto Gato con los datos de la fila
-                val gato = Gato(id, nombre, peso, localidad, descripcion, emocion, imgPath)
+                val gato = Gato(id, nombre, peso, localidad, descripcion, emocion, imgResId)
 
                 // Agregar el objeto Gato a la lista
                 listaGatos.add(gato)
             }
         }
+
 
         db.close() // Cierra la conexión a la base de datos
 
@@ -492,108 +496,112 @@ class DatabaseHelper(context: Context) :
 
 
 
-//    // ----------------------------
-//    // Insertar un gato en tabla GatosUser
-//    fun insertarGatoUser(gato: Gato) {
-//        val db = writableDatabase
-//        val values = ContentValues().apply {
-//            put(COLUMN_NOMBRE, gato.nombre)
-//            put(COLUMN_PESO, gato.peso)
-//            put(COLUMN_LOCALIDAD, gato.localidad)
-//            put(COLUMN_DESCRIPCION, gato.descripcion)
-//            put(COLUMN_EMOCION, gato.emocion)
-//            put(COLUMN_IMG_PATH, gato.img)
-//        }
-//        db.insert(TABLE_GATOS_USER, null, values)
-//        db.close()
-//    }
-//
-//    // ----------------------------
-//    // Eliminar un gato de la tabla GatosLibres
-//    fun eliminarGatoLibre(id: Int) {
-//        val db = writableDatabase
-//        db.delete(TABLE_GATOS_LIBRES, "$COLUMN_ID=?", arrayOf(id.toString()))
-//        db.close()
-//    }
-//
-//    // ----------------------------
-//    // Generar un gato aleatorio
-//    fun generarGatoAleatorio(): Gato {
-//        val nombres = listOf("Michi", "Garfield", "Luna", "Tom", "Simba", "Salem", "Félix")
-//        val localidades = listOf("Ciudad A", "Ciudad B", "Ciudad C", "Ciudad D", "Ciudad E")
-//        val emociones = listOf("Feliz", "Triste", "Encantado", "Tranquilo")
-//
-//        return Gato(
-//            id = null,
-//            nombre = nombres.random(),
-//            peso = (3..6).random() + listOf(0.0, 0.5).random(),
-//            localidad = localidades.random(),
-//            descripcion = "Un gato generado aleatoriamente",
-//            emocion = emociones.random(),
-//            img = null
-//        )
-//    }
-//
-//    // ----------------------------
-//    // Insertar gato aleatorio en tabla GatosLibres
-//    fun insertarGatoLibre(gato: Gato) {
-//        val db = writableDatabase
-//        val values = ContentValues().apply {
-//            put(COLUMN_NOMBRE, gato.nombre)
-//            put(COLUMN_PESO, gato.peso)
-//            put(COLUMN_LOCALIDAD, gato.localidad)
-//            put(COLUMN_DESCRIPCION, gato.descripcion)
-//            put(COLUMN_EMOCION, gato.emocion)
-//            put(COLUMN_IMG_PATH, gato.img)
-//        }
-//        db.insert(TABLE_GATOS_LIBRES, null, values)
-//        db.close()
-//    }
-//
-//    // ----------------------------
-//    // Generar un comprador aleatorio
-//    fun generarCompradorAleatorio(): Comprador {
-//        val nombres = listOf("Luis", "Ana", "Pepe", "Juan", "Lucía", "Carlos", "Marta")
-//        val localidades = listOf("Bosque", "Ciudad", "Playa", "Montaña", "Lago")
-//
-//        return Comprador(
-//            id = null,
-//            nombre = nombres.random(),
-//            dinero = (1000..2000).random().toDouble(),
-//            localidad = localidades.random(),
-//            img = null
-//        )
-//    }
-//
-//    // ----------------------------
-//    // Insertar comprador aleatorio en tabla Compradores
-//    fun insertarComprador(comprador: Comprador) {
-//        val db = writableDatabase
-//        val values = ContentValues().apply {
-//            put(COLUMN_NOMBRE, comprador.nombre)
-//            put(COLUMN_DINERO, comprador.dinero)
-//            put(COLUMN_LOCALIDAD, comprador.localidad)
-//            put(COLUMN_IMG_PATH, comprador.img)
-//        }
-//        db.insert(TABLE_COMPRADORES, null, values)
-//        db.close()
-//    }
-//
-//    // ----------------------------
-//    // Función que procesa toda la compra (desde un fragmento o activity llamas solo esto)
-//    fun procesarCompraGato(gato: Gato) {
-//        insertarGatoUser(gato)
-//        eliminarGatoLibre(gato.id!!)
-//
-//        val nuevoGato = generarGatoAleatorio()
-//        insertarGatoLibre(nuevoGato)
-//
-//        val nuevoComprador = generarCompradorAleatorio()
-//        insertarComprador(nuevoComprador)
-//    }
-//
-//    // Aquí podrías tener otras funciones como obtener gatos, etc.
-//}
+    // ----------------------------
+    // Insertar un gato en tabla GatosUser
+    fun insertarGatoUser(gato: Gato) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_NOMBRE, gato.nombre)
+            put(COLUMN_PESO, gato.peso)
+            put(COLUMN_LOCALIDAD, gato.localidad)
+            put(COLUMN_DESCRIPCION, gato.descripcion)
+            put(COLUMN_EMOCION, gato.emocion)
+            put(COLUMN_IMG_PATH, gato.img)
+        }
+        db.insert(TABLE_GATOS_USER, null, values)
+        db.close()
+    }
+
+
+    // ----------------------------
+    // Generar un gato aleatorio
+    fun generarGatoAleatorio(): Gato {
+        val localidades = listOf("Ciudad A", "Ciudad B", "Ciudad C", "Ciudad D", "Ciudad E")
+        val emociones = listOf("Feliz", "Triste", "Encantado", "Tranquilo")
+        val imagenes =listOf(
+            R.drawable.gato1,
+            R.drawable.gato2,
+            R.drawable.gatos3,
+            R.drawable.gatos4,
+            R.drawable.gato5,
+            R.drawable.gato6,
+            R.drawable.gato7,
+            R.drawable.gato8,
+            R.drawable.gato9,
+            R.drawable.gato10,
+            R.drawable.gato11,
+        )
+        val imagenAleatoria = imagenes.random()
+        return Gato(
+            id = null,
+            nombre = "No hay nombre aun",
+            peso = (3..6).random() + listOf(0.0, 0.5).random(),
+            localidad = localidades.random(),
+            descripcion = "Un gato generado aleatoriamente",
+            emocion = emociones.random(),
+
+            img = imagenAleatoria
+        )
+    }
+
+    // ----------------------------
+    // Insertar gato aleatorio en tabla GatosLibres
+    fun insertarGatoLibre(gato: Gato) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_NOMBRE, gato.nombre)
+            put(COLUMN_PESO, gato.peso)
+            put(COLUMN_LOCALIDAD, gato.localidad)
+            put(COLUMN_DESCRIPCION, gato.descripcion)
+            put(COLUMN_EMOCION, gato.emocion)
+            put(COLUMN_IMG_PATH, gato.img)
+        }
+        db.insert(TABLE_GATOS_LIBRES, null, values)
+        db.close()
+    }
+
+    // ----------------------------
+    // Generar un comprador aleatorio
+    fun generarCompradorAleatorio(): Comprador {
+        val nombres = listOf("Luis", "Ana", "Pepe", "Juan", "Lucía", "Carlos", "Marta")
+        val localidades = listOf("Bosque", "Ciudad", "Playa", "Montaña", "Lago")
+
+        return Comprador(
+            id = null,
+            nombre = nombres.random(),
+            dinero = (1000..2000).random().toDouble(),
+            localidad = localidades.random(),
+            img = null
+        )
+    }
+
+    // ----------------------------
+    // Insertar comprador aleatorio en tabla Compradores
+    fun insertarComprador(comprador: Comprador) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_NOMBRE, comprador.nombre)
+            put(COLUMN_DINERO, comprador.dinero)
+            put(COLUMN_LOCALIDAD, comprador.localidad)
+            put(COLUMN_IMG_PATH, comprador.img)
+        }
+        db.insert(TABLE_COMPRADORES, null, values)
+        db.close()
+    }
+
+    // ----------------------------
+    // Función que procesa toda la compra (desde un fragmento o activity llamas solo esto)
+    fun procesarCompraGato(gato: Gato) {
+        insertarGatoUser(gato)
+        eliminarGatoLibre(gato.id!!)
+
+        val nuevoGato = generarGatoAleatorio()
+        insertarGatoLibre(nuevoGato)
+
+        val nuevoComprador = generarCompradorAleatorio()
+        insertarComprador(nuevoComprador)
+    }
+
 
 
 }
