@@ -7,12 +7,13 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import androidx.fragment.app.add
+import com.example.gatoshunter.R
 import com.example.gatoshunter.clases.Comprador
 import com.example.gatoshunter.clases.Gato
 import com.example.gatoshunter.clases.User
 
 private const val DATABASE_NAME = "Gatos_Hunter.db"
-private const val DATABASE_VERSION = 9
+private const val DATABASE_VERSION = 10
 
 class DatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -95,16 +96,16 @@ class DatabaseHelper(context: Context) :
 
     private fun insertarDatosIniciales(db: SQLiteDatabase) {
         // Insertar Usuarios iniciales
-        val Gato1 = Gato(null, "Gato1", 4.5, "Ciudad A", "Gato muy juguetón", "Feliz", null) // ID nulo para autoincremento
-        val Gato2 = Gato(null, "Gato2", 3.2, "Ciudad B", "Gato tranquilo", "Triste", null)
-        val Gato3 = Gato(null, "Gato3", 5.0, "Ciudad C", "Gato curioso", "Encantado", null)
-        val Gato4 = Gato(null, "Gato4", 4.8, "Ciudad D", "Muy sociable", "Encantado", null)
-        val Gato5 = Gato(null, "Gato5", 4.1, "Ciudad E", "Amante de los respectivos", "Triste", null)
-        val Gato6 = Gato(null, "Gato6", 3.5, "Ciudad F", "Le gusta dormir", "Tranquilo", null)
-        val Gato7 = Gato(null, "Gato7", 5.2, "Ciudad G", "Un gato amigable", "Feliz", null)
-        val Gato8 = Gato(null, "Gato8", 4.9, "Ciudad H", "Le encanta jugar", "Encantado", null)
-        val Gato9 = Gato(null, "Gato9", 4.3, "Ciudad I", "Le encanta dormir", "Tranquilo", null)
-        val Gato10 = Gato(null, "Gato10", 4.7, "Ciudad J", "Le encanta comer", "Tranquilo", null)
+        val Gato1 = Gato(null, "Gato1", 4.5, "Ciudad A", "Gato muy juguetón", "Feliz", R.drawable.gato1.toString()) // ID nulo para autoincremento
+        val Gato2 = Gato(null, "Gato2", 3.2, "Ciudad B", "Gato tranquilo", "Triste", R.drawable.gato2.toString())
+        val Gato3 = Gato(null, "Gato3", 5.0, "Ciudad C", "Gato curioso", "Encantado", R.drawable.gatos3.toString())
+        val Gato4 = Gato(null, "Gato4", 4.8, "Ciudad D", "Muy sociable", "Encantado", R.drawable.gatos4.toString())
+        val Gato5 = Gato(null, "Gato5", 4.1, "Ciudad E", "Amante de los respectivos", "Triste", R.drawable.gato5.toString())
+        val Gato6 = Gato(null, "Gato6", 3.5, "Ciudad F", "Le gusta dormir", "Tranquilo", R.drawable.gato6.toString())
+        val Gato7 = Gato(null, "Gato7", 5.2, "Ciudad G", "Un gato amigable", "Feliz", R.drawable.gato7.toString())
+        val Gato8 = Gato(null, "Gato8", 4.9, "Ciudad H", "Le encanta jugar", "Encantado", R.drawable.gato8.toString())
+        val Gato9 = Gato(null, "Gato9", 4.3, "Ciudad I", "Le encanta dormir", "Tranquilo", R.drawable.gato9.toString())
+        val Gato10 = Gato(null, "Gato10", 4.7, "Ciudad J", "Le encanta comer", "Tranquilo", R.drawable.gato10.toString())
 
         insertarGatoInicial(db, Gato1)
         insertarGatoInicial(db, Gato2)
@@ -118,16 +119,16 @@ class DatabaseHelper(context: Context) :
         insertarGatoInicial(db, Gato10)
 
         // Insertar Compradores iniciales
-        val comprador1 = Comprador(null, "Mercader Errante", 2000.0, "Bosque", null)
-        val comprador2 = Comprador(null, "Anciano Sabio", 1500.0, "Montaña", null)
-        val comprador3 = Comprador(null, "Pepe", 1000.0, "Desierto", null)
-        val comprador4 = Comprador(null, "Juan", 1200.0, "Ciudad", null)
-        val comprador5 = Comprador(null, "Maria", 1800.0, "Pueblo", null)
-        val comprador6 = Comprador(null, "Luis", 1300.0, "Lago", null)
-        val comprador7 = Comprador(null, "Ana", 1600.0, "Playa", null)
-        val comprador8 = Comprador(null, "Carlos", 1100.0, "Ciudad", null)
-        val comprador9 = Comprador(null, "Laura", 1400.0, "Montaña", null)
-        val comprador10 = Comprador(null, "Pedro", 1700.0, "Bosque", null)
+        val comprador1 = Comprador(null, "Mercader Errante", 2000.0, "Bosque", R.drawable.character1.toString())
+        val comprador2 = Comprador(null, "Anciano Sabio", 1500.0, "Montaña", R.drawable.character2.toString())
+        val comprador3 = Comprador(null, "Pepe", 1000.0, "Desierto", R.drawable.character3.toString())
+        val comprador4 = Comprador(null, "Juan", 1200.0, "Ciudad", R.drawable.character4.toString())
+        val comprador5 = Comprador(null, "Maria", 1800.0, "Pueblo", R.drawable.character5.toString())
+        val comprador6 = Comprador(null, "Luis", 1300.0, "Lago", R.drawable.character6.toString())
+        val comprador7 = Comprador(null, "Ana", 1600.0, "Playa", R.drawable.character7.toString())
+        val comprador8 = Comprador(null, "Carlos", 1100.0, "Ciudad", R.drawable.character8.toString())
+        val comprador9 = Comprador(null, "Laura", 1400.0, "Montaña", R.drawable.character9.toString())
+        val comprador10 = Comprador(null, "Pedro", 1700.0, "Bosque", R.drawable.character1.toString())
 
         insertarCompradorInicial(db, comprador1)
         insertarCompradorInicial(db, comprador2)
@@ -226,7 +227,7 @@ class DatabaseHelper(context: Context) :
         // No incluyas el ID aquí, ya que se usa en la cláusula WHERE
         values.put(COLUMN_NOMBRE, usuario.nombre)
         values.put(COLUMN_DINERO, usuario.dinero)
-        values.put(COLUMN_PASSWORD, usuario.password) // Considera la seguridad
+        values.put(COLUMN_PASSWORD, usuario.password)
         values.put(COLUMN_IMG_PATH, usuario.img) // Actualiza la ruta de la imagen
 
         // Define la cláusula WHERE para especificar qué fila(s) actualizar
@@ -235,15 +236,18 @@ class DatabaseHelper(context: Context) :
             arrayOf(usuario.id.toString()) // Argumentos para la cláusula WHERE (el ID del usuario)
 
         // Realiza la actualización
-        // db.update(nombreTabla, valoresAActualizar, clausulaWHERE, argumentosWHERE)
-        val count = db.update(
-            TABLE_USUARIOS,
-            values,
-            selection,
-            selectionArgs
-        )
+        db.update(TABLE_USUARIOS, values, selection, selectionArgs)
 
         db.close() // Cierra la conexión a la base de datos
+    }
+
+    fun actualizarNombreGato(id: Int, nuevoNombre: String) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_NOMBRE, nuevoNombre)
+        }
+        db.update(TABLE_GATOS_USER, values, "id = ?", arrayOf(id.toString()))
+
     }
 
     //================================= OBTENER DATOS =========================================
@@ -303,7 +307,7 @@ class DatabaseHelper(context: Context) :
         ) // Devuelve true si se encontró al menos una fila, false en caso contrario
     }
 
-    fun obtenerGatosUser(): List<Gato>{
+    fun obtenerGatosUser(User: User): List<Gato>{
 
         val db = readableDatabase
         val listaGatos = mutableListOf<Gato>()
@@ -315,14 +319,18 @@ class DatabaseHelper(context: Context) :
             COLUMN_EMOCION,
             COLUMN_IMG_PATH,
             COLUMN_LOCALIDAD,
-            COLUMN_DESCRIPCION
+            COLUMN_DESCRIPCION,
+            COLUMN_USER_ID,
         )
+
+        val selection = "$COLUMN_USER_ID = ?"
+        val selectionArgs = arrayOf(User.id.toString())
 
         val cursor: Cursor = db.query(
             TABLE_GATOS_USER,   // La tabla a consultar
             projection,       // Las columnas a devolver
-            null,        // Las columnas para la cláusula WHERE
-            null,    // Los valores para la cláusula WHERE
+            selection,        // Las columnas para la cláusula WHERE
+            selectionArgs,    // Los valores para la cláusula WHERE
             null,     // No agrupar las filas
             null,      // No filtrar por grupos de filas
             null      // El orden de clasificación
@@ -349,6 +357,7 @@ class DatabaseHelper(context: Context) :
                 val descripcion = it.getString(descripcionIndex)
                 val emocion = it.getString(emocionIndex)
                 val imgPath = it.getString(imgPathIndex) // Puede ser null si la columna permite nulls
+
 
                 // Crear un objeto Gato con los datos de la fila
                 val gato = Gato(id, nombre, peso, localidad, descripcion, emocion, imgPath)
@@ -481,14 +490,7 @@ class DatabaseHelper(context: Context) :
 
     }
 
-    fun actualizarNombreGato(id: Int, nuevoNombre: String) {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put(COLUMN_NOMBRE, nuevoNombre)
-        }
-        db.update(TABLE_GATOS_USER, values, "id = ?", arrayOf(id.toString()))
 
-    }
 
 
 }

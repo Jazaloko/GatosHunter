@@ -2,21 +2,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="8dp"
     android:layout_marginBottom="8dp">
 
-    <TextView
-        android:id="@+id/nombreComprador"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/nombre_del_comprador"
-        android:textSize="16sp" />
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/imagenComprador"
+            android:text="@string/imagen_del_comprador"
+            android:layout_width="125dp"
+            android:layout_height="100dp"/>
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/localidadComprador"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/localidad_del_comprador"
-        android:textSize="14sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="10dp">
+        <TextView
+            android:id="@+id/nombreComprador"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nombre_del_comprador"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/localidadComprador"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/localidad_del_comprador"
+            android:textSize="16sp" />
+    </LinearLayout>
 </LinearLayout>

@@ -1,7 +1,8 @@
 package com.example.gatoshunter.clases
 
-import java.io.Serializable
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Gato(
     var id: Int?,
     var nombre: String,
@@ -10,4 +11,4 @@ data class Gato(
     var descripcion: String,
     var emocion: String,
     var img: String?
-): Serializable
+)

@@ -15,6 +15,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gatoshunter.adaptes.AvatarAdapter
+import com.example.gatoshunter.adaptes.GatoAdapter
+import com.example.gatoshunter.adaptes.OnGatoDoubleClickListener
 import com.example.gatoshunter.clases.*
 import com.example.miapp.database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var dbHelper: DatabaseHelper
     var textUser: TextView? = null
     var textDinero: TextView? = null
-    private lateinit var adapter: MainAdapter
+    private lateinit var adapter: GatoAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
 
-        adapter = MainAdapter(emptyList(), object : OnGatoDoubleClickListener {
+        adapter = GatoAdapter(emptyList(), object : OnGatoDoubleClickListener {
             override fun onGatoDoubleClick(gato: Gato) {
                 mostrarDialogoGato(gato)
             }
@@ -83,7 +86,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun cargarDatosGatos() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val listaActualizadaDeGatos = dbHelper.obtenerGatosUser()
+            val prefs = applicationContext.getAppSharedPreferences()
+            val user = prefs.getUserAsync("Usuario")!!
+            val listaActualizadaDeGatos = dbHelper.obtenerGatosUser(user)
             withContext(Dispatchers.Main) {
                 adapter.actualizarLista(listaActualizadaDeGatos)
             }
@@ -124,7 +129,7 @@ class MainActivity : AppCompatActivity() {
             if (isLoggedIn && user != null) {
                 withContext(Dispatchers.Main) {
                     textUser?.text = user.nombre
-                    textDinero?.text = "$${user.dinero}"
+                    textDinero?.text = user.dinero.toString()
                     loadProfileImage(user.img)
                 }
             } else {
@@ -182,20 +187,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showAvatarDialog() {
-        val avatarIds = intArrayOf(
-            R.drawable.character1, R.drawable.character2, R.drawable.character3,
-            R.drawable.character4, R.drawable.character5, R.drawable.character6,
-            R.drawable.character7, R.drawable.character8, R.drawable.character9
-        )
+        lifecycleScope.launch(Dispatchers.Main) {
+            val prefs = applicationContext.getAppSharedPreferences()
+            var user = prefs.getUserAsync("Usuario")!!
 
-        val adapter = AvatarAdapter(this, avatarIds)
+            val avatarIds = intArrayOf(
+                R.drawable.character1, R.drawable.character2, R.drawable.character3,
+                R.drawable.character4, R.drawable.character5, R.drawable.character6,
+                R.drawable.character7, R.drawable.character8, R.drawable.character9
+            )
 
-        AlertDialog.Builder(this)
-            .setTitle("Selecciona un avatar")
-            .setAdapter(adapter) { _, which ->
-                profileImageView.setImageResource(avatarIds[which])
-            }
-            .show()
+            val adapter = AvatarAdapter(this@MainActivity, avatarIds)
+
+            AlertDialog.Builder(this@MainActivity)
+                .setTitle("Selecciona un avatar")
+                .setAdapter(adapter) { _, which ->
+                    profileImageView.setImageResource(avatarIds[which])
+
+                    val resourceName = resources.getResourceEntryName(avatarIds[which])
+                    if (resourceName != null){
+                        val avatarPath = "drawable/$resourceName"
+                        user = user.copy(img = avatarPath)
+                    }
+                    if (user.id != null) {
+                        dbHelper.updateUsuario(user)
+                    }
+                }
+                .show()
+        }
+
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

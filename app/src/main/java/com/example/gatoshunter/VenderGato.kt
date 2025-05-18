@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gatoshunter.clases.Comprador
-import com.example.gatoshunter.clases.CompradorAdapter
+import com.example.gatoshunter.adaptes.CompradorAdapter
 import com.example.miapp.database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
