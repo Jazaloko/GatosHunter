@@ -1,13 +1,16 @@
-package com.example.gatoshunter.clases
+package com.example.gatoshunter.adaptes
 
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gatoshunter.R
+import com.example.gatoshunter.clases.Comprador
 
 class CompradorAdapter(private var listaCompradores: List<Comprador>) :
     RecyclerView.Adapter<CompradorAdapter.CompradorViewHolder>() {
@@ -18,8 +21,8 @@ class CompradorAdapter(private var listaCompradores: List<Comprador>) :
     // ViewHolder que mantiene las vistas de cada ítem (comprador) en el RecyclerView
     class CompradorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nombre: TextView = itemView.findViewById(R.id.nombreComprador) // Nombre del comprador
-        val localidad: TextView =
-            itemView.findViewById(R.id.localidadComprador) // Localidad del comprador
+        val localidad: TextView = itemView.findViewById(R.id.localidadComprador) // Localidad del comprador
+        val imagen: ImageView = itemView.findViewById(R.id.imagenComprador) // Imagen del comprador
     }
 
     // Método para crear y devolver un ViewHolder que contiene el layout de cada ítem del RecyclerView
@@ -30,13 +33,26 @@ class CompradorAdapter(private var listaCompradores: List<Comprador>) :
     }
 
     // Método que vincula los datos de un comprador a las vistas en el ViewHolder
-    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: CompradorViewHolder, position: Int) {
         val comprador = listaCompradores[position] // Obtener el comprador en la posición actual
 
         // Configurar el texto de cada campo en el ViewHolder
-        holder.nombre.text = comprador.nombre
-        holder.localidad.text = comprador.localidad
+        holder.nombre.text = "Nombre: " + comprador.nombre
+        holder.localidad.text = "Localidad: " + comprador.localidad
+
+        // Configurar la imagen del comprador
+        val imagenName = comprador.img
+        val resourceId = holder.itemView.context.resources.getIdentifier(
+            imagenName,
+            "drawable",
+            holder.itemView.context.packageName
+        )
+
+        if (resourceId != 0) {
+            holder.imagen.setImageResource(resourceId)
+        } else {
+            holder.imagen.setImageResource(R.drawable.character1)
+        }
 
         // Cambiar el color de fondo del ítem seleccionado
         holder.itemView.setBackgroundColor(

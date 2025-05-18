@@ -1,4 +1,4 @@
-package com.example.gatoshunter.clases
+package com.example.gatoshunter.adaptes
 
 import android.content.Context
 import android.view.View

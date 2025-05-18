@@ -14,4 +14,5 @@
     <string name="vender_gato">Vender Gato</string>
     <string name="imagen_del_gato">Imagen del Gato</string>
     <string name="emocion_gato">Emocion del Gato</string>
+    <string name="imagen_del_comprador" />
 </resources>

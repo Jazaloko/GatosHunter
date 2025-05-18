@@ -1,6 +1,5 @@
 package com.example.gatoshunter
 
-import android.icu.util.Calendar
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -13,19 +12,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gatoshunter.clases.Gato
-import com.example.gatoshunter.clases.GatoAdapter
+import com.example.gatoshunter.adaptes.GatoAdapter
 import com.example.miapp.database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.example.gatoshunter.TemporizadorMedianoche
-import java.util.concurrent.TimeUnit
 
 class BuscarGato : AppCompatActivity() {
 
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var adapter: GatoAdapter
     private lateinit var timerTextView: TextView
-    private val handler = Handler()
     private var ultimoGatoCompradoId: Int? = null
     private lateinit var temporizadorMedianoche: TemporizadorMedianoche
 
@@ -49,7 +45,7 @@ class BuscarGato : AppCompatActivity() {
 
         // --- Cat Loading Logic (using filtering) ---
         val gatosToShow: List<Gato> = loadOrCreateDailyCats()
-        adapter = GatoAdapter(gatosToShow) // Initialize adapter with the loaded/new cats
+        adapter = GatoAdapter(gatosToShow, null) // Initialize adapter with the loaded/new cats
         recyclerView.adapter = adapter
         // --- End Cat Loading Logic ---
 
