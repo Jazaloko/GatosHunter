@@ -198,30 +198,31 @@ class VenderGato : AppCompatActivity() {
                     val user = prefs.getUserAsync("Usuario")!!
                     val gatosUsuario = dbHelper.obtenerGatosByUser(user)
 
-                    gatosUsuario.forEach {
-                        if (it.nombre == compradorSeleccionado.nombreGatoInteres){
-                            val dialogView = layoutInflater.inflate(R.layout.dialog_venta_completada, null)
+                    val gatoEncontrado = gatosUsuario.find { it.nombre == compradorSeleccionado.nombreGatoInteres }
 
-                            val builder = android.app.AlertDialog.Builder(this@VenderGato)
-                                .setView(dialogView)
+                    if (gatoEncontrado != null) {
+                        val dialogView = layoutInflater.inflate(R.layout.dialog_venta_completada, null)
 
-                            val dialog = builder.create()
+                        val builder = android.app.AlertDialog.Builder(this@VenderGato)
+                            .setView(dialogView)
 
-                            val mensaje = dialogView.findViewById<TextView>(R.id.mensajeVenta)
-                            val btnAceptar = dialogView.findViewById<Button>(R.id.btnAceptarVenta)
+                        val dialog = builder.create()
 
-                            mensaje.text = "Has vendido un gato a ${compradorSeleccionado.comprador.nombre}"
+                        val mensaje = dialogView.findViewById<TextView>(R.id.mensajeVenta)
+                        val btnAceptar = dialogView.findViewById<Button>(R.id.btnAceptarVenta)
 
-                            btnAceptar.setOnClickListener {
-                                adapter.eliminarComprador(compradorSeleccionadoId)
-                                adapter.selectedItemId = null
-                                currentDailyBuyersList = currentDailyBuyersList.filter { it.comprador.id != compradorSeleccionadoId }
-                                dialog.dismiss()
-                            }
-                            dialog.show()
+                        mensaje.text = "Has vendido un gato a ${compradorSeleccionado.comprador.nombre}"
+
+                        btnAceptar.setOnClickListener {
+                            adapter.eliminarComprador(compradorSeleccionadoId)
+                            adapter.selectedItemId = null
+                            currentDailyBuyersList = currentDailyBuyersList.filter { it.comprador.id != compradorSeleccionadoId }
+                            dialog.dismiss()
                         }
+                        dialog.show()
+                    } else {
+                        Toast.makeText(this@VenderGato, "No tienes un gato con ese nombre", Toast.LENGTH_SHORT).show()
                     }
-
                 }
 
             } else {
@@ -231,5 +232,6 @@ class VenderGato : AppCompatActivity() {
             Toast.makeText(this, "Selecciona un comprador primero", Toast.LENGTH_SHORT).show()
         }
     }
+
 
 }
