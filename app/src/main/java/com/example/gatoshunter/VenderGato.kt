@@ -1,6 +1,7 @@
 package com.example.gatoshunter
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gatoshunter.clases.Comprador
 import com.example.gatoshunter.adaptes.CompradorAdapter
+import com.example.gatoshunter.clases.Gato
 import com.example.miapp.database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,9 +27,10 @@ class VenderGato : AppCompatActivity() {
     private lateinit var timerTextView: TextView
     private lateinit var temporizadorMedianoche: TemporizadorMedianoche
 
-    private var currentDailyBuyersList: List<Comprador> = emptyList()
+    private var currentDailyBuyersList: List<CompradorConGato> = emptyList()
 
     private val COMPRADORES_PREFS_NAME = "CompradoresDiariosPrefs"
+    private val GATOS_PREFS_NAME = "GatosDiariosPrefs"
     private val KEY_COMPRADOR_IDS = "comprador_ids_daily"
     private val KEY_LAST_GENERATION_TIMESTAMP = "last_generation_timestamp"
 
@@ -44,14 +47,14 @@ class VenderGato : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
+        adapter = CompradorAdapter(emptyList())
+        recyclerView.adapter = adapter
 
 
         lifecycleScope.launch(Dispatchers.IO) {
             currentDailyBuyersList = loadOrCreateDailyBuyers()
             withContext(Dispatchers.Main) {
-                // Initialize adapter on the main thread
-                adapter = CompradorAdapter(currentDailyBuyersList)
-                recyclerView.adapter = adapter
+                adapter.actualizarLista(currentDailyBuyersList)
             }
         }
 
@@ -70,8 +73,8 @@ class VenderGato : AppCompatActivity() {
     }
 
     //Cargar compradores diarios o crear si es un nuevo día
-    private fun loadOrCreateDailyBuyers(): List<Comprador> {
-        val savedBuyerIds = cargarCompradoresDiarios()
+    private fun loadOrCreateDailyBuyers(): List<CompradorConGato> {
+        val savedBuyersWithCats = cargarCompradoresDiarios()
         val lastTimestamp = cargarUltimaGeneracionTimestamp()
         val currentCalendar = Calendar.getInstance()
         val lastGenerationCalendar = Calendar.getInstance().apply { timeInMillis = lastTimestamp }
@@ -81,56 +84,74 @@ class VenderGato : AppCompatActivity() {
                 currentCalendar.get(Calendar.DAY_OF_YEAR) == lastGenerationCalendar.get(Calendar.DAY_OF_YEAR)
 
         val allPotentialBuyers = dbHelper.obtenerCompradores()
+        val allPotentialGatos = dbHelper.obtenerGatos()
 
         return if (isSameDay) {
-            // If it's the same day, load the saved buyers.
-            // If savedBuyerIds is empty, it means all were sold today, so we return an empty list.
-            val dailyBuyers = allPotentialBuyers.filter { it.id in savedBuyerIds }
-            if (dailyBuyers.size != savedBuyerIds.size) {
-                Log.w("VenderGato", "Mismatch between saved IDs count (${savedBuyerIds.size}) and found buyers count (${dailyBuyers.size}). This might indicate a buyer was deleted from the database.")
+            // Si es el mismo día, intenta cargar los compradores con sus gatos guardados.
+            savedBuyersWithCats.mapNotNull { (buyerId, catName) ->
+                allPotentialBuyers.find { it.id == buyerId }?.let { CompradorConGato(it, catName) }
             }
-            Log.d("VenderGato", "Loading buyers for the same day. Saved IDs: ${savedBuyerIds.joinToString(",")}")
-            dailyBuyers
+
         } else {
-            // If it's a new day or no timestamp saved, generate new buyers.
-            Log.d("VenderGato", "New day or no timestamp. Generating new buyers.")
-            selectAndSaveNewDailyBuyers(allPotentialBuyers)
+            // Si es un nuevo día, genera nuevos compradores y asigna gatos aleatorios.
+            Log.d("VenderGato", "Nuevo día o no timestamp. Generando nuevos compradores con gatos.")
+            selectAndSaveNewDailyBuyers(allPotentialBuyers, allPotentialGatos)
         }
+
     }
 
+    data class CompradorConGato(val comprador: Comprador, val nombreGatoInteres: String?)
+
     // Helper function to select 3 random buyers and save their IDs and the current timestamp
-    private fun selectAndSaveNewDailyBuyers(allPotentialBuyers: List<Comprador>): List<Comprador> {
+    private fun selectAndSaveNewDailyBuyers(allPotentialBuyers: List<Comprador>, gatos: List<Gato>): List<CompradorConGato> {
         // Ensure we don't select more buyers than available
         val numberOfBuyersToSelect = minOf(3, allPotentialBuyers.size)
         val selectedBuyers = allPotentialBuyers.shuffled().take(numberOfBuyersToSelect)
-        val selectedBuyerIds = selectedBuyers.mapNotNull { it.id }
+        val selectedGatos = gatos.shuffled().take(numberOfBuyersToSelect)
+
+        val compradoresConGato = selectedBuyers.zip(selectedGatos) { comprador, gato ->
+            CompradorConGato(comprador, gato.nombre)
+        }
 
         // Save the new list of IDs and the current timestamp
-        guardarCompradoresDiarios(selectedBuyerIds)
+        guardarCompradoresDiarios(
+            compradoresConGato.mapNotNull { it.comprador.id },
+            compradoresConGato.mapNotNull { it.nombreGatoInteres }
+        )
         guardarUltimaGeneracionTimestamp(System.currentTimeMillis())
 
-        Log.d("VenderGato", "Selected and saved new daily buyer IDs: ${selectedBuyerIds.joinToString(",")}")
-        return selectedBuyers
+        Log.d("VenderGato", "Selected and saved new daily buyers with cats: ${compradoresConGato.joinToString { "${it.comprador.nombre} -> ${it.nombreGatoInteres}" }}")
+        return compradoresConGato
     }
 
 
     // Guardar los compradores del dia (IDs)
-    private fun guardarCompradoresDiarios(ids: List<Int>) {
+    private fun guardarCompradoresDiarios(ids: List<Int>, gatosNames: List<String>) {
         val prefs = getSharedPreferences(COMPRADORES_PREFS_NAME, MODE_PRIVATE)
         prefs.edit().putString(KEY_COMPRADOR_IDS, ids.joinToString(",")).apply()
+        prefs.edit().putString(GATOS_PREFS_NAME, gatosNames.joinToString(",")).apply()
     }
 
-    // Cargar los compradores del dia (IDs)
-    private fun cargarCompradoresDiarios(): List<Int> {
+    // Cargar los compradores del dia (IDs) con los nombres de los gatos
+    private fun cargarCompradoresDiarios(): List<Pair<Int, String>> {
         val prefs = getSharedPreferences(COMPRADORES_PREFS_NAME, MODE_PRIVATE)
         val idsString = prefs.getString(KEY_COMPRADOR_IDS, null)
-        return if (idsString.isNullOrEmpty()) {
+        val gatosNames = prefs.getString(GATOS_PREFS_NAME, null)
+        return if (idsString.isNullOrEmpty() || gatosNames.isNullOrEmpty()) {
             emptyList()
         } else {
             try {
-                idsString.split(",").mapNotNull { it.toIntOrNull() }
+                val ids = idsString.split(",").mapNotNull { it.toIntOrNull() }
+                val nombresDeGatos = gatosNames.split(",")
+                // Asegurarse de que ambas listas tengan la misma cantidad de elementos
+                if (ids.size == nombresDeGatos.size) {
+                    ids.zip(nombresDeGatos) { id, nombreGato -> Pair(id, nombreGato) }
+                } else {
+                    Log.w("VenderGato", "Mismatch en la cantidad de IDs de compradores y nombres de gatos guardados.")
+                    emptyList()
+                }
             } catch (e: Exception) {
-                Log.e("VenderGato", "Error parsing comprador_ids_daily from SharedPreferences", e)
+                Log.e("VenderGato", "Error al parsear los compradores o los nombres de los gatos desde SharedPreferences", e)
                 emptyList()
             }
         }
@@ -148,10 +169,12 @@ class VenderGato : AppCompatActivity() {
         return prefs.getLong(KEY_LAST_GENERATION_TIMESTAMP, 0L) // Default to 0 if not found
     }
 
+
     // Resetear Compradores a media noche
     private suspend fun updateRecyclerViewData() {
         val allPotentialBuyers = dbHelper.obtenerCompradores() // Get ALL potential buyers from DB
-        val nuevosCompradores = selectAndSaveNewDailyBuyers(allPotentialBuyers) // Select new ones and save IDs and timestamp
+        val allPotentialGatos = dbHelper.obtenerGatos() // Get ALL potential gatos from DB
+        val nuevosCompradores = selectAndSaveNewDailyBuyers(allPotentialBuyers, allPotentialGatos) // Select new ones and save IDs and timestamp
 
         withContext(Dispatchers.Main) {
             currentDailyBuyersList = nuevosCompradores // Actualizar la lista in-memory
@@ -167,29 +190,40 @@ class VenderGato : AppCompatActivity() {
         val compradorSeleccionadoId = adapter.selectedItemId
         if (compradorSeleccionadoId != null) {
 
-            val compradorSeleccionado = currentDailyBuyersList.find { it.id == compradorSeleccionadoId }
+            val compradorSeleccionado = currentDailyBuyersList.find { it.comprador.id == compradorSeleccionadoId }
 
             if (compradorSeleccionado != null) {
-                val dialogView = layoutInflater.inflate(R.layout.dialog_venta_completada, null)
+                lifecycleScope.launch(Dispatchers.Main) {
+                    val prefs = applicationContext.getAppSharedPreferences()
+                    val user = prefs.getUserAsync("Usuario")!!
+                    val gatosUsuario = dbHelper.obtenerGatosByUser(user)
 
-                val builder = android.app.AlertDialog.Builder(this)
-                    .setView(dialogView)
+                    gatosUsuario.forEach {
+                        if (it.nombre == compradorSeleccionado.nombreGatoInteres){
+                            val dialogView = layoutInflater.inflate(R.layout.dialog_venta_completada, null)
 
-                val dialog = builder.create()
+                            val builder = android.app.AlertDialog.Builder(this@VenderGato)
+                                .setView(dialogView)
 
-                val mensaje = dialogView.findViewById<TextView>(R.id.mensajeVenta)
-                val btnAceptar = dialogView.findViewById<Button>(R.id.btnAceptarVenta)
+                            val dialog = builder.create()
 
-                mensaje.text = "Has vendido un gato a ${compradorSeleccionado.nombre}"
+                            val mensaje = dialogView.findViewById<TextView>(R.id.mensajeVenta)
+                            val btnAceptar = dialogView.findViewById<Button>(R.id.btnAceptarVenta)
 
-                btnAceptar.setOnClickListener {
-                    adapter.eliminarComprador(compradorSeleccionadoId)
-                    adapter.selectedItemId = null
-                    currentDailyBuyersList = currentDailyBuyersList.filter { it.id != compradorSeleccionadoId }
-                    dialog.dismiss()
+                            mensaje.text = "Has vendido un gato a ${compradorSeleccionado.comprador.nombre}"
+
+                            btnAceptar.setOnClickListener {
+                                adapter.eliminarComprador(compradorSeleccionadoId)
+                                adapter.selectedItemId = null
+                                currentDailyBuyersList = currentDailyBuyersList.filter { it.comprador.id != compradorSeleccionadoId }
+                                dialog.dismiss()
+                            }
+                            dialog.show()
+                        }
+                    }
+
                 }
 
-                dialog.show()
             } else {
                 Toast.makeText(this, "Error: Comprador no encontrado.", Toast.LENGTH_SHORT).show()
             }
