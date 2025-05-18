@@ -32,9 +32,7 @@ class DetalleGatoActivity : AppCompatActivity() {
             textPeso.text = "${gato.peso} kg"
             textEmocion.text = gato.emocion
             textDescripcion.text = gato.descripcion
-            gato.img?.let {
-                imageGato.setImageResource(it)
-            }
+
         }
     }
 }

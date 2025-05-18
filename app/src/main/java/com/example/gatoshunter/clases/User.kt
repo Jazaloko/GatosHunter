@@ -9,5 +9,5 @@ data class User(
     val nombre: String,
     val password: String,
     val dinero: Double,
-    val img: Int?
+    val img: String?
 )

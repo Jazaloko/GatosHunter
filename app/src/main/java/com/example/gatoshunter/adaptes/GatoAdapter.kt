@@ -74,14 +74,22 @@ class GatoAdapter(private var listaGatos: List<Gato>, private val listener: OnGa
         )
 
         // Cuando el ítem es tocado, cambia el estado de selección
-        holder.itemView.setOnClickListener {
-            val previosPosition =
-                selectedItemId // Guardamos la posición anterior del gato seleccionado
-            selectedItemId = gato.id // Actualizamos el gato seleccionado
+        var lastClickTime = 0L
+        val DOUBLE_CLICK_TIME_DELTA = 300 // milisegundos
 
-            // Notificamos que los ítems han cambiado para actualizar la UI correctamente
-            notifyItemChanged(listaGatos.indexOfFirst { it.id == previosPosition }) // Notificamos que el ítem anterior debe cambiar de estado
-            notifyItemChanged(position) // Notificamos que el ítem actual debe actualizarse para reflejar la selección
+        holder.itemView.setOnClickListener {
+            val clickTime = System.currentTimeMillis()
+            if (clickTime - lastClickTime < DOUBLE_CLICK_TIME_DELTA) {
+                // Doble clic detectado
+                listener?.onGatoDoubleClick(gato)
+            }
+            lastClickTime = clickTime
+
+            // Mantener funcionalidad de selección
+            val previosPosition = selectedItemId
+            selectedItemId = gato.id
+            notifyItemChanged(listaGatos.indexOfFirst { it.id == previosPosition })
+            notifyItemChanged(position)
         }
     }
 

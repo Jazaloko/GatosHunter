@@ -96,17 +96,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun mostrarDialogoGato(gato: Gato) {
-        val mensaje = """
-            🐱 Nombre: ${gato.nombre}
-            🏠 Localidad: ${gato.localidad}
-            ⚖️ Peso: ${gato.peso} kg
-            😊 Emoción: ${gato.emocion}
-            📝 Descripción: ${gato.descripcion}
-        """.trimIndent()
+        val dialogView = layoutInflater.inflate(R.layout.dialog_gato, null)
+
+        val imageView = dialogView.findViewById<ImageView>(R.id.dialogGatoImagen)
+        val textView = dialogView.findViewById<TextView>(R.id.dialogGatoTexto)
+
+        val resourceId = resources.getIdentifier(gato.img, "drawable", packageName)
+        imageView.setImageResource(resourceId) // gato.img es un resourceId
+        textView.text = """
+        🐱 Nombre: ${gato.nombre}
+        🏠 Localidad: ${gato.localidad}
+        ⚖️ Peso: ${gato.peso} kg
+        😊 Emoción: ${gato.emocion}
+        📝 Descripción: ${gato.descripcion}
+    """.trimIndent()
 
         AlertDialog.Builder(this)
             .setTitle("Información del Gato")
-            .setMessage(mensaje)
+            .setView(dialogView)
             .setPositiveButton("OK", null)
             .show()
     }
