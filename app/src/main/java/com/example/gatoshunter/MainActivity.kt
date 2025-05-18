@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             val prefs = applicationContext.getAppSharedPreferences()
             val user = prefs.getUserAsync("Usuario")!!
-            val listaActualizadaDeGatos = dbHelper.obtenerGatosUser(user)
+            val listaActualizadaDeGatos = dbHelper.obtenerGatosByUser(user)
             withContext(Dispatchers.Main) {
                 adapter.actualizarLista(listaActualizadaDeGatos)
             }
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    fun colocarDatosUsuario() {
+    private fun colocarDatosUsuario() {
         lifecycleScope.launch(Dispatchers.IO) {
             val prefs = applicationContext.getAppSharedPreferences()
             val isLoggedIn = prefs.getBoolean("isLoggedIn", false)
@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
             if (isLoggedIn && user != null) {
                 withContext(Dispatchers.Main) {
                     textUser?.text = user.nombre
-                    textDinero?.text = user.dinero.toString()
+                    textDinero?.text = "$" + user.dinero.toString()
                     loadProfileImage(user.img)
                 }
             } else {
