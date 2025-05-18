@@ -1,7 +1,10 @@
 package com.example.gatoshunter.clases
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
+@Parcelize
 @Serializable
 data class Gato(
     var id: Int?,
@@ -11,4 +14,4 @@ data class Gato(
     var descripcion: String,
     var emocion: String,
     var img: String?
-)
+): Parcelable

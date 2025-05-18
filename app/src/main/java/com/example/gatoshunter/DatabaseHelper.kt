@@ -131,16 +131,16 @@ class DatabaseHelper(context: Context) :
 
     private fun insertarCompradoresIniciales(db: SQLiteDatabase) {
         val compradoresIniciales = listOf(
-            Comprador(null, "Mercader Errante", 2000.0, "Bosque", R.drawable.character1.toString()),
-            Comprador(null, "Anciano Sabio", 1500.0, "Montaña", R.drawable.character2.toString()),
-            Comprador(null, "Pepe", 1000.0, "Desierto", R.drawable.character3.toString()),
-            Comprador(null, "Juan", 1200.0, "Ciudad", R.drawable.character4.toString()),
-            Comprador(null, "Maria", 1800.0, "Pueblo", R.drawable.character5.toString()),
-            Comprador(null, "Luis", 1300.0, "Lago", R.drawable.character6.toString()),
-            Comprador(null, "Ana", 1600.0, "Playa", R.drawable.character7.toString()),
-            Comprador(null, "Carlos", 1100.0, "Ciudad", R.drawable.character8.toString()),
-            Comprador(null, "Laura", 1400.0, "Montaña", R.drawable.character9.toString()),
-            Comprador(null, "Pedro", 1700.0, "Bosque", R.drawable.character1.toString())
+            Comprador(null, "Mercader Errante", 2000.0, "Bosque", R.drawable.character1.toString(), null),
+            Comprador(null, "Anciano Sabio", 1500.0, "Montaña", R.drawable.character2.toString(), null),
+            Comprador(null, "Pepe", 1000.0, "Desierto", R.drawable.character3.toString(), null),
+            Comprador(null, "Juan", 1200.0, "Ciudad", R.drawable.character4.toString(), null),
+            Comprador(null, "Maria", 1800.0, "Pueblo", R.drawable.character5.toString(), null),
+            Comprador(null, "Luis", 1300.0, "Lago", R.drawable.character6.toString(), null),
+            Comprador(null, "Ana", 1600.0, "Playa", R.drawable.character7.toString(), null),
+            Comprador(null, "Carlos", 1100.0, "Ciudad", R.drawable.character8.toString(), null),
+            Comprador(null, "Laura", 1400.0, "Montaña", R.drawable.character9.toString(), null),
+            Comprador(null, "Pedro", 1700.0, "Bosque", R.drawable.character1.toString(), null)
         )
         compradoresIniciales.forEach { insertarComprador(db, it) }
     }
@@ -229,7 +229,7 @@ class DatabaseHelper(context: Context) :
         }
         val selection = "$COLUMN_ID = ?"
         val selectionArgs = arrayOf(id.toString())
-        db.update(TABLE_GATOS, values, selection, selectionArgs)
+        db.update(TABLE_GATOS_USER, values, selection, selectionArgs)
         db.close()
     }
     //endregion
@@ -286,9 +286,9 @@ class DatabaseHelper(context: Context) :
                     it.getInt(it.getColumnIndexOrThrow(COLUMN_ID)),
                     it.getString(it.getColumnIndexOrThrow(COLUMN_NOMBRE)),
                     it.getDouble(it.getColumnIndexOrThrow(COLUMN_DINERO)),
-                    it.getString
-                        (it.getColumnIndexOrThrow(COLUMN_LOCALIDAD)),
-                    it.getString(it.getColumnIndexOrThrow(COLUMN_IMG_PATH))
+                    it.getString(it.getColumnIndexOrThrow(COLUMN_LOCALIDAD)),
+                    it.getString(it.getColumnIndexOrThrow(COLUMN_IMG_PATH)),
+                    null
                 )
             }
         }
@@ -371,7 +371,8 @@ class DatabaseHelper(context: Context) :
                     it.getString(it.getColumnIndexOrThrow(COLUMN_NOMBRE)),
                     it.getDouble(it.getColumnIndexOrThrow(COLUMN_DINERO)),
                     it.getString(it.getColumnIndexOrThrow(COLUMN_LOCALIDAD)),
-                    it.getString(it.getColumnIndexOrThrow(COLUMN_IMG_PATH))
+                    it.getString(it.getColumnIndexOrThrow(COLUMN_IMG_PATH)),
+                    null
                 )
                 listaComprador.add(comprador)
             }
