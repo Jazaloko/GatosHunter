@@ -147,7 +147,7 @@ class BuscarGato : AppCompatActivity() {
 
             val gatoSeleccionado = adapter.getGatoSeleccionado()
             if (gatoSeleccionado != null && user != null) {
-                dbHelper.insertarGatoUser(gatoSeleccionado, user)
+                dbHelper.insertarGatoUser(gatoSeleccionado, user)  // <-- Aquí se inserta en GatosUser
                 dbHelper.eliminarGatoLibre(gatoSeleccionado.id!!)
                 ultimoGatoCompradoId = gatoSeleccionado.id
 
@@ -163,6 +163,7 @@ class BuscarGato : AppCompatActivity() {
             }
         }
     }
+
 
     private fun mostrarDialogoExito() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_compra_exitosa, null)

@@ -22,11 +22,13 @@ class DatabaseHelper(context: Context) :
     companion object {
         const val TABLE_GATOS = "Gatos"
         const val TABLE_GATOS_USER = "GatosUser"
-        const val TABLE_GATOS_LIBRES = "GatosLibres"
         const val TABLE_COMPRADORES = "Compradores"
         const val TABLE_USUARIOS = "Users"
+
         const val COLUMN_ID = "id"
         const val COLUMN_USER_ID = "idUser"
+        const val COLUMN_GATO_ID = "cat_id"
+
         const val COLUMN_NOMBRE = "name"
         const val COLUMN_PASSWORD = "pwd"
         const val COLUMN_PESO = "Peso"
@@ -35,111 +37,7 @@ class DatabaseHelper(context: Context) :
         const val COLUMN_DINERO = "Dinero"
         const val COLUMN_EMOCION = "Emocion"
         const val COLUMN_IMG_PATH = "Img_Path"
-    }
-
-    //Secuencia SQL para crear las tablas
-    private val CREATE_TABLE_USUARIOS = "CREATE TABLE $TABLE_USUARIOS (" +
-            "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$COLUMN_NOMBRE TEXT UNIQUE, " +
-            "$COLUMN_PASSWORD TEXT," +
-            "$COLUMN_DINERO REAL, " +
-            "$COLUMN_IMG_PATH TEXT)"
-
-    private val CREATE_TABLE_GATOS = "CREATE TABLE $TABLE_GATOS (" +
-            "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$COLUMN_NOMBRE TEXT, " +
-            "$COLUMN_PESO REAL, " +
-            "$COLUMN_LOCALIDAD TEXT, " +
-            "$COLUMN_DESCRIPCION TEXT," +
-            "$COLUMN_EMOCION TEXT, " +
-            "$COLUMN_IMG_PATH TEXT)"
-
-    private val CREATE_TABLE_GATOS_LIBRE = "CREATE TABLE $TABLE_GATOS_LIBRES (" +
-            "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$COLUMN_NOMBRE TEXT, " +
-            "$COLUMN_PESO REAL, " +
-            "$COLUMN_LOCALIDAD TEXT, " +
-            "$COLUMN_DESCRIPCION TEXT," +
-            "$COLUMN_EMOCION TEXT, " +
-            "$COLUMN_IMG_PATH TEXT)"
-
-    private val CREATE_TABLE_GATOS_USER = "CREATE TABLE $TABLE_GATOS_USER (" +
-            "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$COLUMN_NOMBRE TEXT, " +
-            "$COLUMN_PESO REAL, " +
-            "$COLUMN_LOCALIDAD TEXT, " +
-            "$COLUMN_DESCRIPCION TEXT," +
-            "$COLUMN_EMOCION TEXT, " +
-            "$COLUMN_IMG_PATH TEXT, " +
-            "$COLUMN_USER_ID INTEGER, " +
-            "FOREIGN KEY($COLUMN_USER_ID) REFERENCES $TABLE_USUARIOS($COLUMN_ID))"
-
-    private val CREATE_TABLE_COMPRADORES = "CREATE TABLE $TABLE_COMPRADORES (" +
-            "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$COLUMN_NOMBRE TEXT, " +
-            "$COLUMN_DINERO REAL, " +
-            "$COLUMN_LOCALIDAD TEXT, " +
-            "$COLUMN_IMG_PATH TEXT)"
-
-
-    //Crear tablas
-    override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(CREATE_TABLE_USUARIOS)
-        db.execSQL(CREATE_TABLE_GATOS)
-        db.execSQL(CREATE_TABLE_COMPRADORES)
-        db.execSQL(CREATE_TABLE_GATOS_USER)
-        db.execSQL(CREATE_TABLE_GATOS_LIBRE)
-
-        insertarDatosIniciales(db)
-
-    }
-
-    private fun insertarDatosIniciales(db: SQLiteDatabase) {
-        // Insertar Usuarios iniciales
-        val Gato1 = Gato(null, "Gato1", 4.5, "Ciudad A", "Gato muy juguetón", "Feliz", R.drawable.gato1.toString()) // ID nulo para autoincremento
-        val Gato2 = Gato(null, "Gato2", 3.2, "Ciudad B", "Gato tranquilo", "Triste", R.drawable.gato2.toString())
-        val Gato3 = Gato(null, "Gato3", 5.0, "Ciudad C", "Gato curioso", "Encantado", R.drawable.gatos3.toString())
-        val Gato4 = Gato(null, "Gato4", 4.8, "Ciudad D", "Muy sociable", "Encantado", R.drawable.gatos4.toString())
-        val Gato5 = Gato(null, "Gato5", 4.1, "Ciudad E", "Amante de los respectivos", "Triste", R.drawable.gato5.toString())
-        val Gato6 = Gato(null, "Gato6", 3.5, "Ciudad F", "Le gusta dormir", "Tranquilo", R.drawable.gato6.toString())
-        val Gato7 = Gato(null, "Gato7", 5.2, "Ciudad G", "Un gato amigable", "Feliz", R.drawable.gato7.toString())
-        val Gato8 = Gato(null, "Gato8", 4.9, "Ciudad H", "Le encanta jugar", "Encantado", R.drawable.gato8.toString())
-        val Gato9 = Gato(null, "Gato9", 4.3, "Ciudad I", "Le encanta dormir", "Tranquilo", R.drawable.gato9.toString())
-        val Gato10 = Gato(null, "Gato10", 4.7, "Ciudad J", "Le encanta comer", "Tranquilo", R.drawable.gato10.toString())
-
-        insertarGatoInicial(db, Gato1)
-        insertarGatoInicial(db, Gato2)
-        insertarGatoInicial(db, Gato3)
-        insertarGatoInicial(db, Gato4)
-        insertarGatoInicial(db, Gato5)
-        insertarGatoInicial(db, Gato6)
-        insertarGatoInicial(db, Gato7)
-        insertarGatoInicial(db, Gato8)
-        insertarGatoInicial(db, Gato9)
-        insertarGatoInicial(db, Gato10)
-
-        // Insertar Compradores iniciales
-        val comprador1 = Comprador(null, "Mercader Errante", 2000.0, "Bosque", R.drawable.character1.toString())
-        val comprador2 = Comprador(null, "Anciano Sabio", 1500.0, "Montaña", R.drawable.character2.toString())
-        val comprador3 = Comprador(null, "Pepe", 1000.0, "Desierto", R.drawable.character3.toString())
-        val comprador4 = Comprador(null, "Juan", 1200.0, "Ciudad", R.drawable.character4.toString())
-        val comprador5 = Comprador(null, "Maria", 1800.0, "Pueblo", R.drawable.character5.toString())
-        val comprador6 = Comprador(null, "Luis", 1300.0, "Lago", R.drawable.character6.toString())
-        val comprador7 = Comprador(null, "Ana", 1600.0, "Playa", R.drawable.character7.toString())
-        val comprador8 = Comprador(null, "Carlos", 1100.0, "Ciudad", R.drawable.character8.toString())
-        val comprador9 = Comprador(null, "Laura", 1400.0, "Montaña", R.drawable.character9.toString())
-        val comprador10 = Comprador(null, "Pedro", 1700.0, "Bosque", R.drawable.character1.toString())
-
-        insertarCompradorInicial(db, comprador1)
-        insertarCompradorInicial(db, comprador2)
-        insertarCompradorInicial(db, comprador3)
-        insertarCompradorInicial(db, comprador4)
-        insertarCompradorInicial(db, comprador5)
-        insertarCompradorInicial(db, comprador6)
-        insertarCompradorInicial(db, comprador7)
-        insertarCompradorInicial(db, comprador8)
-        insertarCompradorInicial(db, comprador9)
-        insertarCompradorInicial(db, comprador10)
+        const val COLUMN_FECHA = "fecha"
     }
 
     // Funciones auxiliares para insertar datos en onCreate (usan la instancia de db proporcionada)
@@ -195,7 +93,7 @@ class DatabaseHelper(context: Context) :
     fun insertarGatoUser(Gato: Gato, User: User) {
         val db = writableDatabase
         val values = ContentValues().apply {
-            put(COLUMN_ID, Gato.id)
+            put(COLUMN_GATO_ID, Gato.id)
             put(COLUMN_NOMBRE, Gato.nombre)
             put(COLUMN_PESO, Gato.peso)
             put(COLUMN_LOCALIDAD, Gato.localidad)
@@ -314,6 +212,7 @@ class DatabaseHelper(context: Context) :
 
         val projection = arrayOf(
             COLUMN_ID,
+            COLUMN_GATO_ID,
             COLUMN_NOMBRE,
             COLUMN_PESO,
             COLUMN_EMOCION,
@@ -340,6 +239,7 @@ class DatabaseHelper(context: Context) :
         cursor.use { // Usa 'use' para asegurar que el cursor se cierre automáticamente
             // Obtener los índices de las columnas
             val idIndex = it.getColumnIndexOrThrow(COLUMN_ID)
+            val idGato = it.getColumnIndexOrThrow(COLUMN_GATO_ID)
             val nombreIndex = it.getColumnIndexOrThrow(COLUMN_NOMBRE)
             val pesoIndex = it.getColumnIndexOrThrow(COLUMN_PESO)
             val localidadIndex = it.getColumnIndexOrThrow(COLUMN_LOCALIDAD)
@@ -349,21 +249,13 @@ class DatabaseHelper(context: Context) :
 
             // Iterar sobre las filas del cursor
             while (it.moveToNext()) {
-                // Leer los datos de la fila actual usando los índices de las columnas
-                val id = it.getInt(idIndex)
-                val nombre = it.getString(nombreIndex)
-                val peso = it.getDouble(pesoIndex)
-                val localidad = it.getString(localidadIndex)
-                val descripcion = it.getString(descripcionIndex)
-                val emocion = it.getString(emocionIndex)
-                val imgPath = it.getString(imgPathIndex) // Puede ser null si la columna permite nulls
-
+                val idGato = it.getInt(idGato)
 
                 // Crear un objeto Gato con los datos de la fila
-                val gato = Gato(id, nombre, peso, localidad, descripcion, emocion, imgPath)
+
 
                 // Agregar el objeto Gato a la lista
-                listaGatos.add(gato)
+                obtenerGatoPorId(idGato)?.let { it1 -> listaGatos.add(it1) }
             }
         }
 
@@ -372,6 +264,104 @@ class DatabaseHelper(context: Context) :
         return listaGatos
 
     }
+
+    fun obtenerGatoPorId(idGato: Int): Gato? {
+        val db = readableDatabase
+
+        val projection = arrayOf(
+            COLUMN_GATO_ID,
+            COLUMN_NOMBRE,
+            COLUMN_PESO,
+            COLUMN_LOCALIDAD,
+            COLUMN_DESCRIPCION,
+            COLUMN_EMOCION,
+            COLUMN_IMG_PATH
+        )
+
+        val selection = "$COLUMN_GATO_ID = ?"
+        val selectionArgs = arrayOf(idGato.toString())
+
+        val cursor = db.query(
+            TABLE_GATOS_USER,  // Asegúrate de que esta sea la tabla correcta
+            projection,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+
+        var gato: Gato? = null
+
+        cursor.use {
+            if (it.moveToFirst()) {
+                val id = it.getInt(it.getColumnIndexOrThrow(COLUMN_GATO_ID))
+                val nombre = it.getString(it.getColumnIndexOrThrow(COLUMN_NOMBRE))
+                val peso = it.getDouble(it.getColumnIndexOrThrow(COLUMN_PESO))
+                val localidad = it.getString(it.getColumnIndexOrThrow(COLUMN_LOCALIDAD))
+                val descripcion = it.getString(it.getColumnIndexOrThrow(COLUMN_DESCRIPCION))
+                val emocion = it.getString(it.getColumnIndexOrThrow(COLUMN_EMOCION))
+                val imgPath = it.getString(it.getColumnIndexOrThrow(COLUMN_IMG_PATH))
+
+                gato = Gato(id, nombre, peso, localidad, descripcion, emocion, imgPath)
+            }
+        }
+
+        db.close()
+        return gato
+    }
+
+    fun obtenerGatosPorUserId(userId: Int): List<Gato> {
+        val db = readableDatabase
+        val gatos = mutableListOf<Gato>()
+
+        val projection = arrayOf(
+            COLUMN_ID,
+            COLUMN_NOMBRE,
+            COLUMN_PESO,
+            COLUMN_EMOCION,
+            COLUMN_IMG_PATH,
+            COLUMN_LOCALIDAD,
+            COLUMN_DESCRIPCION,
+            COLUMN_USER_ID
+        )
+
+        val selection = "$COLUMN_USER_ID = ?"
+        val selectionArgs = arrayOf(userId.toString())
+
+        val cursor = db.query(
+            TABLE_GATOS_USER,
+            projection,
+            selection,
+            selectionArgs,
+            null, null, null
+        )
+
+        cursor.use {
+            val idIndex = it.getColumnIndexOrThrow(COLUMN_ID)
+            val nombreIndex = it.getColumnIndexOrThrow(COLUMN_NOMBRE)
+            val pesoIndex = it.getColumnIndexOrThrow(COLUMN_PESO)
+            val emocionIndex = it.getColumnIndexOrThrow(COLUMN_EMOCION)
+            val imgPathIndex = it.getColumnIndexOrThrow(COLUMN_IMG_PATH)
+            val localidadIndex = it.getColumnIndexOrThrow(COLUMN_LOCALIDAD)
+            val descripcionIndex = it.getColumnIndexOrThrow(COLUMN_DESCRIPCION)
+
+            while (it.moveToNext()) {
+                val id = it.getInt(idIndex)
+                val nombre = it.getString(nombreIndex)
+                val peso = it.getDouble(pesoIndex)
+                val emocion = it.getString(emocionIndex)
+                val imgPath = it.getString(imgPathIndex)
+                val localidad = it.getString(localidadIndex)
+                val descripcion = it.getString(descripcionIndex)
+
+                gatos.add(Gato(id, nombre, peso, localidad, descripcion, emocion, imgPath))
+            }
+        }
+        return gatos
+    }
+
+
 
     fun obtenerGatosLibres(): List<Gato>{
 
@@ -489,7 +479,85 @@ class DatabaseHelper(context: Context) :
         return listaComprador
 
     }
+    fun actualizarComprador(comprador: Comprador): Boolean {
+        val db = writableDatabase
+        val valores = ContentValues().apply {
+            put("nombre", comprador.nombre)
+            put("dinero", comprador.dinero)
+            // Pon aquí otras columnas si tienes más campos que actualizar
+        }
+        val filasActualizadas = db.update(
+            "compradores",  // Nombre de la tabla
+            valores,
+            "id = ?",
+            arrayOf(comprador.id.toString())
+        )
+        return filasActualizadas > 0
+    }
+    fun obtenerGatosUser(userId: Int): List<Gato> {
+        val listaGatos = mutableListOf<Gato>()
+        val db = readableDatabase
 
+        val projection = arrayOf(
+            COLUMN_ID,
+            COLUMN_NOMBRE,
+            COLUMN_PESO,
+            COLUMN_LOCALIDAD,
+            COLUMN_DESCRIPCION,
+            COLUMN_EMOCION,
+            COLUMN_IMG_PATH,
+            COLUMN_USER_ID
+        )
+
+        val selection = "$COLUMN_USER_ID = ?"
+        val selectionArgs = arrayOf(userId.toString())
+
+        val cursor = db.query(
+            TABLE_GATOS_USER,
+            projection,
+            selection,
+            selectionArgs,
+            null, null, null
+        )
+
+        cursor.use {
+            val idIndex = it.getColumnIndexOrThrow(COLUMN_ID)
+            val nombreIndex = it.getColumnIndexOrThrow(COLUMN_NOMBRE)
+            val pesoIndex = it.getColumnIndexOrThrow(COLUMN_PESO)
+            val localidadIndex = it.getColumnIndexOrThrow(COLUMN_LOCALIDAD)
+            val descripcionIndex = it.getColumnIndexOrThrow(COLUMN_DESCRIPCION)
+            val emocionIndex = it.getColumnIndexOrThrow(COLUMN_EMOCION)
+            val imgPathIndex = it.getColumnIndexOrThrow(COLUMN_IMG_PATH)
+
+            while (it.moveToNext()) {
+                val id = it.getInt(idIndex)
+                val nombre = it.getString(nombreIndex)
+                val peso = it.getDouble(pesoIndex)
+                val localidad = it.getString(localidadIndex)
+                val descripcion = it.getString(descripcionIndex)
+                val emocion = it.getString(emocionIndex)
+                val imgPath = it.getString(imgPathIndex)
+
+                listaGatos.add(Gato(id, nombre, peso, localidad, descripcion, emocion, imgPath))
+            }
+        }
+
+        db.close()
+        return listaGatos
+    }
+
+    fun eliminarGatoDeUsuario(gatoId: Int?, userId: Int) {
+        if (gatoId == null) return
+
+        val db = writableDatabase
+
+        val whereClause = "$COLUMN_ID = ? AND $COLUMN_USER_ID = ?"
+        val whereArgs = arrayOf(gatoId.toString(), userId.toString())
+
+        db.delete(TABLE_GATOS_USER, whereClause, whereArgs)
+
+        db.close()
+    }
 
 
 
