@@ -156,7 +156,6 @@ class DatabaseHelper(context: Context) :
             put(COLUMN_IMG_PATH, gato.img)
         }
         db.insert(TABLE_GATOS, null, values)
-        db.close()
     }
 
     private fun insertarComprador(db: SQLiteDatabase, comprador: Comprador) {
@@ -167,7 +166,6 @@ class DatabaseHelper(context: Context) :
             put(COLUMN_IMG_PATH, comprador.img)
         }
         db.insert(TABLE_COMPRADORES, null, values)
-        db.close()
     }
 
     fun insertarCompradorDiario(compradorId: Int, userId: Int) {
@@ -265,7 +263,6 @@ class DatabaseHelper(context: Context) :
     //Eliminar un gato de la lista de gatos del usuario
     fun eliminarGatoDeUsuario(gatoId: Int, userId: Int) {
         val db = writableDatabase
-
         try {
             val whereClause = "$COLUMN_GATO_ID = ? AND $COLUMN_USER_ID = ?"
             val whereArgs = arrayOf(gatoId.toString(), userId.toString())
@@ -332,7 +329,6 @@ class DatabaseHelper(context: Context) :
                 )
             }
         }
-        db.close()
         return gato
     }
 
@@ -417,7 +413,6 @@ class DatabaseHelper(context: Context) :
                 }
             }
         }
-        db.close()
         return listaGatos
     }
 
