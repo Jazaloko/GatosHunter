@@ -156,6 +156,7 @@ class DatabaseHelper(context: Context) :
             put(COLUMN_IMG_PATH, gato.img)
         }
         db.insert(TABLE_GATOS, null, values)
+        db.close()
     }
 
     private fun insertarComprador(db: SQLiteDatabase, comprador: Comprador) {
@@ -166,6 +167,7 @@ class DatabaseHelper(context: Context) :
             put(COLUMN_IMG_PATH, comprador.img)
         }
         db.insert(TABLE_COMPRADORES, null, values)
+        db.close()
     }
 
     fun insertarCompradorDiario(compradorId: Int, userId: Int) {
@@ -260,6 +262,30 @@ class DatabaseHelper(context: Context) :
         }
     }
 
+    //Eliminar un gato de la lista de gatos del usuario
+    fun eliminarGatoDeUsuario(gatoId: Int, userId: Int) {
+        val db = writableDatabase
+
+        try {
+            val whereClause = "$COLUMN_GATO_ID = ? AND $COLUMN_USER_ID = ?"
+            val whereArgs = arrayOf(gatoId.toString(), userId.toString())
+            val deletedRows = db.delete(TABLE_GATOS_USER, whereClause, whereArgs)
+
+            if (deletedRows > 0) {
+                Log.d("DatabaseHelper", "Eliminado gato $gatoId para usuario $userId de GatosUser. Filas afectadas: $deletedRows")
+                // Puedes realizar acciones adicionales aquí si es necesario
+            } else {
+                Log.d("DatabaseHelper", "No se encontró gato $gatoId para eliminar para usuario $userId en GatosUser.")
+            }
+        }
+        catch (e: Exception) {
+            Log.e("DatabaseHelper", "Error al eliminar gato de usuario: ${e.message}")
+        }
+        finally {
+            db.close()
+        }
+    }
+
     //endregion
 
     //region ACTUALIZAR DATOS
@@ -274,17 +300,6 @@ class DatabaseHelper(context: Context) :
         val selection = "$COLUMN_ID = ?"
         val selectionArgs = arrayOf(usuario.id.toString())
         db.update(TABLE_USUARIOS, values, selection, selectionArgs)
-        db.close()
-    }
-
-    fun actualizarNombreGato(id: Int, nuevoNombre: String) {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put(COLUMN_NOMBRE, nuevoNombre)
-        }
-        val selection = "$COLUMN_ID = ?"
-        val selectionArgs = arrayOf(id.toString())
-        db.update(TABLE_GATOS, values, selection, selectionArgs)
         db.close()
     }
     //endregion

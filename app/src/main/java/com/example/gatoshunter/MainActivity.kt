@@ -62,10 +62,12 @@ class MainActivity : AppCompatActivity() {
 
         button1.setOnClickListener {
             startActivity(Intent(this, BuscarGato::class.java))
+            finish()
         }
 
         button2.setOnClickListener {
             startActivity(Intent(this, VenderGato::class.java))
+            finish()
         }
 
         profileImageView.setOnClickListener {
@@ -74,6 +76,7 @@ class MainActivity : AppCompatActivity() {
 
         try {
             colocarDatosUsuario()
+            cargarDatosGatos()
         } catch (e: Exception) {
             Log.e("MainActivity", "Error al colocar datos del usuario", e)
         }
@@ -89,6 +92,7 @@ class MainActivity : AppCompatActivity() {
             val prefs = applicationContext.getAppSharedPreferences()
             val user = prefs.getUserAsync("Usuario")!!
             val listaActualizadaDeGatos = dbHelper.obtenerGatosByUser(user)
+            Log.e("MainActivity", "Lista de gatos actualizada: $listaActualizadaDeGatos")
             withContext(Dispatchers.Main) {
                 adapter.actualizarLista(listaActualizadaDeGatos)
             }

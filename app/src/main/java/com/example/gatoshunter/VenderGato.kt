@@ -1,5 +1,6 @@
 package com.example.gatoshunter
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
@@ -8,6 +9,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -77,9 +79,14 @@ class VenderGato : AppCompatActivity() {
 
 
         //Botones
-        backButton.setOnClickListener { finish() }
+        backButton.setOnClickListener {
+            startActivity(Intent(this@VenderGato, MainActivity::class.java))
+            finish()
+        }
 
-        sellButton.setOnClickListener { resolverVenta() }
+        sellButton.setOnClickListener {
+            resolverVenta()
+        }
 
         // Timer
         temporizadorMedianoche = TemporizadorMedianoche(timerTextView) {
@@ -96,7 +103,7 @@ class VenderGato : AppCompatActivity() {
         temporizadorMedianoche.iniciar()
     }
 
-    data class CompradorConGato(val comprador: Comprador, val nombreGatoInteres: String?)
+    data class CompradorConGato(val comprador: Comprador, val nombreGatoInteres: String?, var gatoUsuarioIdPreferido: Int? = null)
 
     //Cargar compradores diarios o crear si es un nuevo día. Ahora requiere el usuario y usa la DB.
     private fun loadOrCreateDailyBuyers(user: User): List<CompradorConGato> {
@@ -110,18 +117,15 @@ class VenderGato : AppCompatActivity() {
                 currentCalendar.get(Calendar.DAY_OF_YEAR) == lastGenerationCalendar.get(Calendar.DAY_OF_YEAR)
 
         return if (isSameDay) {
-            // Si es el mismo día, carga los compradores desde la tabla CompradorUser para este usuario
-            Log.d("VenderGato", "Mismo día para usuario ${user.id}. Cargando compradores desde DB.")
-            val compradoresDelDiaDB = dbHelper.obtenerCompradoresDiariosByUser(user)
-
-            // Carga el mapa de asociación CompradorId -> NombreGato para el día desde SharedPreferences (already user-specific)
             val buyerCatMap = cargarDailyBuyerCatMap(user.id!!)
+            val compradoresDelDiaDB = dbHelper.obtenerCompradoresDiariosByUser(user)
+            val gatosUsuario = dbHelper.obtenerGatosByUser(user)
 
-            // Combina los compradores de la DB con los nombres de gatos de SharedPreferences
             compradoresDelDiaDB.mapNotNull { comprador ->
                 val catName = buyerCatMap[comprador.id.toString()]
                 if (catName != null) {
-                    CompradorConGato(comprador, catName)
+                    val gatoUsuarioCoincidente = gatosUsuario.find { it.nombre == catName }
+                    CompradorConGato(comprador, catName, gatoUsuarioCoincidente?.id)
                 } else {
                     Log.w("VenderGato", "No se encontró nombre de gato para comprador ${comprador.id} en el mapa del día de usuario ${user.id}.")
                     null
@@ -129,10 +133,9 @@ class VenderGato : AppCompatActivity() {
             }.also {
                 Log.d("VenderGato", "Compradores cargados para usuario ${user.id}: ${it.size}")
             }
-
         } else {
             Log.d("VenderGato", "Nuevo día o no timestamp para usuario ${user.id}. Generando nuevos compradores y actualizando DB.")
-            selectAndSaveNewDailyBuyers(user) // selectAndSaveNewDailyBuyers will call guardarUltimaGeneracionTimestamp with the user ID
+            selectAndSaveNewDailyBuyers(user)
         }
     }
 
@@ -147,6 +150,7 @@ class VenderGato : AppCompatActivity() {
 
         val allPotentialBuyers = dbHelper.obtenerCompradores() // Get ALL potential buyers from main DB table
         val allPotentialGatos = dbHelper.obtenerGatos() // Get ALL potential gatos from main DB table
+        val gatosUsuario = dbHelper.obtenerGatosByUser(user) // Get ALL gatos from user's DB table
 
         // Ensure we don't select more buyers/gatos than available
         val numberOfItemsToSelect = minOf(3, allPotentialBuyers.size, allPotentialGatos.size)
@@ -157,18 +161,21 @@ class VenderGato : AppCompatActivity() {
         val buyerCatMap = mutableMapOf<String, String>() // Mapa para guardar CompradorId -> NombreGato
 
         selectedBuyers.zip(selectedGatos) { comprador, gato ->
-            compradoresConGato.add(CompradorConGato(comprador, gato.nombre))
-            // Inserta el comprador en la tabla CompradorUser para este usuario
-            dbHelper.insertarCompradorDiario(comprador.id!!, user.id!!)
-            // Guarda la asociación en el mapa (already user-specific key)
-            buyerCatMap[comprador.id.toString()] = gato.nombre!!
+            val compradorConGato = CompradorConGato(comprador, gato.nombre)
+            // Verificar si el usuario tiene un gato con el mismo nombre
+            val gatoUsuarioCoincidente = gatosUsuario.find { it.nombre == gato.nombre }
+            compradorConGato.gatoUsuarioIdPreferido = gatoUsuarioCoincidente?.id
+
+            compradoresConGato.add(compradorConGato)
+            dbHelper.insertarCompradorDiario(comprador.id!!, user.id)
+            buyerCatMap[comprador.id.toString()] = gato.nombre
         }
 
         // Guarda el mapa de asociación CompradorId -> NombreGato en SharedPreferences para este usuario (already user-specific)
-        guardarDailyBuyerCatMap(user.id!!, buyerCatMap)
+        guardarDailyBuyerCatMap(user.id, buyerCatMap)
 
         // Guarda el timestamp de la generación (PER USER)
-        guardarUltimaGeneracionTimestamp(System.currentTimeMillis(), user.id!!) // Pass the user's ID here!
+        guardarUltimaGeneracionTimestamp(System.currentTimeMillis(), user.id) // Pass the user's ID here!
 
         Log.d("VenderGato", "Generados y guardados ${compradoresConGato.size} compradores diarios con gatos para usuario ${user.id}.")
         return compradoresConGato
@@ -279,13 +286,10 @@ class VenderGato : AppCompatActivity() {
                             mensaje.text = "Has vendido un gato a ${compradorSeleccionadoConGato.comprador.nombre}"
 
                             btnAceptar.setOnClickListener {
-                                // Eliminar este comprador de la tabla CompradorUser para este usuario
-                                // para que desaparezca de la lista diaria.
-
-                                mostrarDialogoVenta(compradorSeleccionadoConGato)
 
                                 lifecycleScope.launch(Dispatchers.IO) {
                                     dbHelper.eliminarCompradorDeUsuario(compradorSeleccionadoId, currentUser!!.id!!)
+                                    dbHelper.eliminarGatoDeUsuario(gatoEncontrado.id!!, currentUser!!.id!!)
                                     Log.d("VenderGato", "Eliminado comprador ${compradorSeleccionadoId} de la lista diaria de usuario ${currentUser!!.id!!}")
 
                                     // Ahora, actualizar la lista in-memory y el adapter en el hilo principal
@@ -301,12 +305,16 @@ class VenderGato : AppCompatActivity() {
                         } else {
                             Toast.makeText(this@VenderGato, "No tienes un gato con el nombre que busca este comprador (${compradorSeleccionadoConGato.nombreGatoInteres})", Toast.LENGTH_SHORT).show()
                         }
+
                     }
+                    startActivity(Intent(this@VenderGato, MainActivity::class.java))
+                    finish()
                 }
 
             } else {
                 Toast.makeText(this, "Error: Comprador seleccionado no encontrado en la lista actual.", Toast.LENGTH_SHORT).show()
             }
+
         } else {
             val message = if (compradorSeleccionadoId == null) "Selecciona un comprador primero" else "Error: No se pudo cargar el usuario."
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -353,6 +361,8 @@ class VenderGato : AppCompatActivity() {
                 comprador.id?.let { it1 -> adapter.eliminarComprador(it1) }
                 adapter.selectedItemId = null
                 currentDailyBuyersList = currentDailyBuyersList.filter { it.comprador.id != comprador.id }
+
+//                resolverVenta()
 
             } else {
                 Toast.makeText(this, "El comprador no tiene suficiente dinero", Toast.LENGTH_SHORT).show()

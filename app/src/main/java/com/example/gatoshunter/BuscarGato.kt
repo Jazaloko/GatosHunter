@@ -1,5 +1,6 @@
 package com.example.gatoshunter
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -57,9 +58,14 @@ class BuscarGato : AppCompatActivity() {
 //        adapter = GatoAdapter(gatos)
 //        recyclerView.adapter = adapter
 
-        backButton.setOnClickListener { finish() }
+        backButton.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
 
-        buyButton.setOnClickListener { resolverCompra() }
+        buyButton.setOnClickListener {
+            resolverCompra()
+        }
 
         // --- Initialize and start the timer ---
         // TemporizadorMedianoche logic triggers the lambda at midnight.
@@ -184,37 +190,14 @@ class BuscarGato : AppCompatActivity() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         dialogView.findViewById<Button>(R.id.btnAceptar).setOnClickListener {
+            finish()
+            startActivity(Intent(this@BuscarGato, MainActivity::class.java))
             dialog.dismiss()
-            mostrarDialogoNombreGato()
         }
 
         dialog.show()
     }
 
-    private fun mostrarDialogoNombreGato() {
-        val input = EditText(this).apply {
-            hint = "Ej: Pelusa"
-            setPadding(50, 40, 50, 40)
-        }
-
-        android.app.AlertDialog.Builder(this)
-            .setTitle("Ponle un nombre a tu gato")
-            .setView(input)
-            .setCancelable(false)
-            .setPositiveButton("Guardar") { d, _ ->
-                val nuevoNombre = input.text.toString().trim()
-                if (nuevoNombre.isNotEmpty() && ultimoGatoCompradoId != null) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        dbHelper.actualizarNombreGato(ultimoGatoCompradoId!!, nuevoNombre)
-                    }
-                    Toast.makeText(this, "¡Nombre guardado!", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "Nombre no válido", Toast.LENGTH_SHORT).show()
-                }
-                d.dismiss()
-            }
-            .show()
-    }
 
 
 }

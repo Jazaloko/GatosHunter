@@ -6,4 +6,5 @@
     <item name="nombreTextView" type="id" />
     <item name="textUser" type="id" />
     <item name="textDinero" type="id" />
+    <item name="profileImageView" type="id" />
 </resources>
