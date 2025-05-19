@@ -74,7 +74,7 @@ class BuscarGato : AppCompatActivity() {
             lifecycleScope.launch(Dispatchers.IO) { // Perform DB operations on IO thread
                 // Lógica para recargar los gatos:
                 val allCats = dbHelper.obtenerGatos() // Get ALL free cats
-                val nuevosGatos = allCats.shuffled().take(3) // Select 3 random from current free cats
+                val nuevosGatos = allCats.shuffled().take(10) // Select 3 random from current free cats
                 val nuevosGatoIds = nuevosGatos.mapNotNull { it.id }
 
                 // Save the new daily cat IDs (overwriting previous ones)
@@ -112,7 +112,7 @@ class BuscarGato : AppCompatActivity() {
             allCats.filter { it.id in savedCatIds }
         } else {
             // No daily cats saved, select new ones and save their IDs
-            val selectedCats = allCats.shuffled().take(3) // Select 3 random
+            val selectedCats = allCats.shuffled().take(5) // Select 3 random
             val selectedCatIds = selectedCats.mapNotNull { it.id }
             guardarGatosDiarios(selectedCatIds) // Save the selected IDs for the day
             selectedCats // Return the newly selected cats
