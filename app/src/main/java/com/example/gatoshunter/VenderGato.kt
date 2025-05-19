@@ -217,14 +217,6 @@ class VenderGato : AppCompatActivity() {
         }
     }
 
-    // Elimina el mapa de asociación CompradorId -> NombreGato interesado de SharedPreferences para un usuario
-    private fun limpiarDailyBuyerCatMap(userId: Int) {
-        val prefs = getSharedPreferences(KEY_DAILY_BUYER_CAT_MAP, MODE_PRIVATE)
-        val key = "${KEY_DAILY_BUYER_CAT_MAP}_$userId" // Clave única por usuario
-        prefs.edit().remove(key).apply()
-        Log.d("VenderGato", "Mapa CompradorId->NombreGato limpio para usuario $userId")
-    }
-
     // --- Lógica para el timestamp (en SP, global) ---
 
     // Guardar el timestamp de la última generación de compradores (per user)
@@ -266,12 +258,12 @@ class VenderGato : AppCompatActivity() {
             val compradorSeleccionadoConGato = currentDailyBuyersList.find { it.comprador.id == compradorSeleccionadoId }
 
             if (compradorSeleccionadoConGato != null) {
-                lifecycleScope.launch(Dispatchers.IO) { // Cambiado a IO para operaciones de DB
+                lifecycleScope.launch(Dispatchers.IO) {
                     val gatosUsuario = dbHelper.obtenerGatosByUser(currentUser!!)
 
                     val gatoEncontrado = gatosUsuario.find { it.nombre == compradorSeleccionadoConGato.nombreGatoInteres }
 
-                    withContext(Dispatchers.Main) { // Volver al hilo principal para UI
+                    withContext(Dispatchers.Main) {
                         if (gatoEncontrado != null) {
                             val dialogView = layoutInflater.inflate(R.layout.dialog_venta_completada, null)
 
@@ -286,40 +278,53 @@ class VenderGato : AppCompatActivity() {
                             mensaje.text = "Has vendido un gato a ${compradorSeleccionadoConGato.comprador.nombre}"
 
                             btnAceptar.setOnClickListener {
-
                                 lifecycleScope.launch(Dispatchers.IO) {
                                     dbHelper.eliminarCompradorDeUsuario(compradorSeleccionadoId, currentUser!!.id!!)
                                     dbHelper.eliminarGatoDeUsuario(gatoEncontrado.id!!, currentUser!!.id!!)
-                                    Log.d("VenderGato", "Eliminado comprador ${compradorSeleccionadoId} de la lista diaria de usuario ${currentUser!!.id!!}")
+                                    Log.d("VenderGato", "Eliminado comprador $compradorSeleccionadoId de la lista diaria de usuario ${currentUser!!.id!!}")
 
-                                    // Ahora, actualizar la lista in-memory y el adapter en el hilo principal
                                     withContext(Dispatchers.Main) {
-                                        currentDailyBuyersList = currentDailyBuyersList.filter { it.comprador.id != compradorSeleccionadoId }
-                                        adapter.actualizarLista(currentDailyBuyersList) // Actualiza el adapter con la nueva lista filtrada
+                                        currentDailyBuyersList = currentDailyBuyersList.filter {
+                                            it.comprador.id != compradorSeleccionadoId
+                                        }
+                                        adapter.actualizarLista(currentDailyBuyersList)
                                         adapter.selectedItemId = null
+
+                                        dialog.dismiss()
+
+                                        // ✅ IMPORTANTE: mover esto aquí para que se ejecute solo después de la venta
+                                        startActivity(Intent(this@VenderGato, MainActivity::class.java))
+                                        finish()
                                     }
                                 }
-                                dialog.dismiss()
                             }
                             dialog.show()
                         } else {
-                            Toast.makeText(this@VenderGato, "No tienes un gato con el nombre que busca este comprador (${compradorSeleccionadoConGato.nombreGatoInteres})", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@VenderGato,
+                                "No tienes un gato con el nombre que busca este comprador (${compradorSeleccionadoConGato.nombreGatoInteres})",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-
                     }
-                    startActivity(Intent(this@VenderGato, MainActivity::class.java))
-                    finish()
                 }
-
             } else {
-                Toast.makeText(this, "Error: Comprador seleccionado no encontrado en la lista actual.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Error: Comprador seleccionado no encontrado en la lista actual.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
         } else {
-            val message = if (compradorSeleccionadoId == null) "Selecciona un comprador primero" else "Error: No se pudo cargar el usuario."
+            val message = if (compradorSeleccionadoId == null)
+                "Selecciona un comprador primero"
+            else
+                "Error: No se pudo cargar el usuario."
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
     }
+
 
     private fun mostrarDialogoVenta(compradorConGato: CompradorConGato) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_info_comprador, null)
@@ -357,12 +362,14 @@ class VenderGato : AppCompatActivity() {
                 // Cierra el diálogo
                 dialog.dismiss()
 
-                // Actualiza UI (elimina comprador vendido)
-                comprador.id?.let { it1 -> adapter.eliminarComprador(it1) }
+// Primero llama a resolverVenta() para eliminar en la base de datos
+                resolverVenta()
+
+// Luego actualiza la interfaz
+                adapter.eliminarComprador(comprador.id!!)
                 adapter.selectedItemId = null
                 currentDailyBuyersList = currentDailyBuyersList.filter { it.comprador.id != comprador.id }
 
-//                resolverVenta()
 
             } else {
                 Toast.makeText(this, "El comprador no tiene suficiente dinero", Toast.LENGTH_SHORT).show()
