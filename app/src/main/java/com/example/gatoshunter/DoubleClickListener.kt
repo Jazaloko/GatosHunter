@@ -1,6 +1,7 @@
 package com.example.gatoshunter
 
 import android.view.View
+import com.example.gatoshunter.clases.Comprador
 
 abstract class DoubleClickListener : View.OnClickListener {
     private var lastClickTime: Long = 0
@@ -15,4 +16,5 @@ abstract class DoubleClickListener : View.OnClickListener {
     }
 
     abstract fun onDoubleClick(v: View)
+
 }

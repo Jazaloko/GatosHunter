@@ -494,4 +494,16 @@ class DatabaseHelper(context: Context) :
         return listaCompradores
     }
     //endregion
+    fun actualizarDineroComprador(compradorId: Int, nuevoDinero: Double) {
+        val db = writableDatabase
+        val valores = ContentValues().apply {
+            put("dinero", nuevoDinero)
+        }
+        val whereClause = "id = ?"
+        val whereArgs = arrayOf(compradorId.toString())
+
+        db.update("Compradores", valores, whereClause, whereArgs)
+        db.close()
+    }
+
 }

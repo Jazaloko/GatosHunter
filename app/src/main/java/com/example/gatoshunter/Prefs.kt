@@ -8,6 +8,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.lang.reflect.Array
 
+
+
 // Nombre del archivo de SharedPreferences
 private const val PREFS_NAME = "MyAppPreferences"
 

@@ -1,5 +1,6 @@
 package com.example.gatoshunter
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.gatoshunter.clases.User
 import com.example.miapp.database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -120,6 +122,7 @@ class Login : AppCompatActivity() {
 
         return esValido // Devuelve true si todos los campos son válidos
     }
+
 
 
 }
