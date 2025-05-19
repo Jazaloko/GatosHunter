@@ -378,7 +378,7 @@ class VenderGato : AppCompatActivity() {
                     .setView(dialogView)
                     .create()
 
-                val btnCerrar = dialogView.findViewById<Button>(R.id.btnAceptarNoDinero)
+                val btnCerrar = dialogView.findViewById<Button>(R.id.btnCerrarNoDinero)
                 btnCerrar.setOnClickListener {
                     dialog.dismiss()
                 }
