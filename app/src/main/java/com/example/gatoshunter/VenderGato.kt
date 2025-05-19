@@ -140,7 +140,7 @@ class VenderGato : AppCompatActivity() {
     }
 
 
-    // Selecciona 3 compradores aleatorios, los añade a CompradorUser para el usuario,
+    // Selecciona 5 compradores aleatorios, los añade a CompradorUser para el usuario,
     // asigna gatos aleatorios y guarda la asociación en SharedPreferences.
     // También actualiza el timestamp.
     private fun selectAndSaveNewDailyBuyers(user: User): List<CompradorConGato> {
@@ -153,7 +153,7 @@ class VenderGato : AppCompatActivity() {
         val gatosUsuario = dbHelper.obtenerGatosByUser(user) // Get ALL gatos from user's DB table
 
         // Ensure we don't select more buyers/gatos than available
-        val numberOfItemsToSelect = minOf(3, allPotentialBuyers.size, allPotentialGatos.size)
+        val numberOfItemsToSelect = minOf(5, allPotentialBuyers.size, allPotentialGatos.size)
         val selectedBuyers = allPotentialBuyers.shuffled().take(numberOfItemsToSelect)
         val selectedGatos = allPotentialGatos.shuffled().take(numberOfItemsToSelect)
 
@@ -362,10 +362,10 @@ class VenderGato : AppCompatActivity() {
                 // Cierra el diálogo
                 dialog.dismiss()
 
-// Primero llama a resolverVenta() para eliminar en la base de datos
+                // Primero llama a resolverVenta() para eliminar en la base de datos
                 resolverVenta()
 
-// Luego actualiza la interfaz
+                // Luego actualiza la interfaz
                 adapter.eliminarComprador(comprador.id!!)
                 adapter.selectedItemId = null
                 currentDailyBuyersList = currentDailyBuyersList.filter { it.comprador.id != comprador.id }
