@@ -16,6 +16,8 @@ import com.example.gatoshunter.adaptes.GatoAdapter
 import com.example.miapp.database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.text.split
+import kotlin.text.toMutableList
 
 class BuscarGato : AppCompatActivity() {
 
@@ -152,6 +154,14 @@ class BuscarGato : AppCompatActivity() {
 
                 runOnUiThread {
                     adapter.eliminarGato(gatoSeleccionado.id!!)
+                    val prefs2 = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                    val idsString = prefs2.getString(KEY_GATO_IDS, null)
+
+                    val listaIds: MutableList<String> = idsString!!.split(',').toMutableList()
+
+                    listaIds.remove(gatoSeleccionado.id.toString())
+                    guardarGatosDiarios(listaIds.map { it.toInt() })
+
                     adapter.selectedItemId = null
                     mostrarDialogoExito()
                 }
@@ -204,11 +214,6 @@ class BuscarGato : AppCompatActivity() {
                 d.dismiss()
             }
             .show()
-    }
-
-    private fun guardarGatosMostradosEnPrefs(ids: List<Int>) {
-        val prefs = getSharedPreferences("GatosPrefs", MODE_PRIVATE)
-        prefs.edit().putString("gatos_ids", ids.joinToString(",")).apply()
     }
 
 

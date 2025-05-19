@@ -229,7 +229,7 @@ class DatabaseHelper(context: Context) :
         }
         val selection = "$COLUMN_ID = ?"
         val selectionArgs = arrayOf(id.toString())
-        db.update(TABLE_GATOS_USER, values, selection, selectionArgs)
+        db.update(TABLE_GATOS, values, selection, selectionArgs)
         db.close()
     }
     //endregion
