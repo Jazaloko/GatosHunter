@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -280,6 +281,9 @@ class VenderGato : AppCompatActivity() {
                             btnAceptar.setOnClickListener {
                                 // Eliminar este comprador de la tabla CompradorUser para este usuario
                                 // para que desaparezca de la lista diaria.
+
+                                mostrarDialogoVenta(compradorSeleccionadoConGato)
+
                                 lifecycleScope.launch(Dispatchers.IO) {
                                     dbHelper.eliminarCompradorDeUsuario(compradorSeleccionadoId, currentUser!!.id!!)
                                     Log.d("VenderGato", "Eliminado comprador ${compradorSeleccionadoId} de la lista diaria de usuario ${currentUser!!.id!!}")
@@ -306,6 +310,75 @@ class VenderGato : AppCompatActivity() {
         } else {
             val message = if (compradorSeleccionadoId == null) "Selecciona un comprador primero" else "Error: No se pudo cargar el usuario."
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun mostrarDialogoVenta(compradorConGato: CompradorConGato) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_info_comprador, null)
+
+        val precioEditText = dialogView.findViewById<EditText>(R.id.precioEditText)
+        val btnVender = dialogView.findViewById<Button>(R.id.btnVender)
+        val btnCancelar = dialogView.findViewById<Button>(R.id.btnCancelar)
+
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        btnVender.setOnClickListener {
+            val precioStr = precioEditText.text.toString()
+            val precio = precioStr.toDoubleOrNull()
+
+            if (precio == null || precio <= 0) {
+                Toast.makeText(this, "Introduce un precio válido", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val comprador = compradorConGato.comprador
+
+            if (comprador.dinero >= precio) {
+                // Resta el precio al dinero del comprador
+                comprador.dinero -= precio
+
+                // Actualiza la BD en background
+                lifecycleScope.launch(Dispatchers.IO) {
+                    comprador.id?.let { it1 -> dbHelper.actualizarDineroComprador(it1, comprador.dinero) }
+                }
+
+                Toast.makeText(this, "Venta realizada por $precio €", Toast.LENGTH_SHORT).show()
+
+                // Cierra el diálogo
+                dialog.dismiss()
+
+                // Actualiza UI (elimina comprador vendido)
+                comprador.id?.let { it1 -> adapter.eliminarComprador(it1) }
+                adapter.selectedItemId = null
+                currentDailyBuyersList = currentDailyBuyersList.filter { it.comprador.id != comprador.id }
+
+            } else {
+                Toast.makeText(this, "El comprador no tiene suficiente dinero", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        btnCancelar.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+    private fun intentarVenderDesdeClick(compradorConGato: CompradorConGato) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            val prefs = applicationContext.getAppSharedPreferences()
+            val user = prefs.getUserAsync("Usuario")!!
+            val gatosUsuario = dbHelper.obtenerGatosByUser(user)
+
+            val gatoEncontrado = gatosUsuario.find { it.nombre == compradorConGato.nombreGatoInteres }
+
+            if (gatoEncontrado == null) {
+                Toast.makeText(this@VenderGato, "No tienes un gato con ese nombre", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            mostrarDialogoVenta(compradorConGato)
         }
     }
 }
