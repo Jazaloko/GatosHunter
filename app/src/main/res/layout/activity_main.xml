@@ -1,111 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
+    android:fillViewport="true"
     android:background="@drawable/backgroundmain">
 
-    <!-- Sección superior: Layout horizontal con imagen y botones -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal">
-
-        <!-- Sección de imagen y texto -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
-
-            <!-- Imagen -->
-            <ImageView
-                android:id="@+id/profileImageView"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/icon_gato1"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:layout_marginEnd="16dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:contentDescription="Imagen de perfil"
-                android:textStyle="bold"
-                android:background="@drawable/border_textview"/>
-
-            <!-- Primer TextView -->
-            <TextView
-                android:id="@+id/textUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="Nombre Usuario"
-                android:textColor="#808080"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:background="@drawable/border_textview"/>
-
-            <!-- Segundo TextView -->
-            <TextView
-                android:id="@+id/textDinero"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="$xxx"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:background="@drawable/border_textview"/>
-        </LinearLayout>
-
-        <!-- Sección de botones -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
-
-            <!-- Primer botón -->
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:backgroundTint="#6200EE"
-                android:text="Buscar gato"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF" />
-
-            <!-- Segundo botón -->
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#6200EE"
-                android:text="Vender gato"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Nuevo LinearLayout (debajo de los anteriores) -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="533dp"
-        android:background="#EEEEEE"
         android:orientation="vertical"
         android:padding="16dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <!-- Sección superior: Layout horizontal con imagen y botones -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal">
+
+            <!-- Sección de imagen y texto -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/profileImageView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/icon_gato1"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
+                    android:layout_marginEnd="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Imagen de perfil"
+                    android:background="@drawable/border_textview" />
+
+                <TextView
+                    android:id="@+id/textUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="Nombre Usuario"
+                    android:textColor="#808080"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/border_textview" />
+
+                <TextView
+                    android:id="@+id/textDinero"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="$xxx"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:background="@drawable/border_textview" />
+            </LinearLayout>
+
+            <!-- Botones -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/button1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="#6200EE"
+                    android:text="Buscar gato"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF" />
+
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#6200EE"
+                    android:text="Vender gato"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Contenedor del RecyclerView -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#EEEEEE"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:scrollbars="vertical" />
+        </LinearLayout>
 
     </LinearLayout>
-</LinearLayout>
-
+</ScrollView>

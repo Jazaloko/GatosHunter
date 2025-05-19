@@ -372,7 +372,18 @@ class VenderGato : AppCompatActivity() {
 
 
             } else {
-                Toast.makeText(this, "El comprador no tiene suficiente dinero", Toast.LENGTH_SHORT).show()
+                // Mostrar diálogo personalizado
+                val dialogView = layoutInflater.inflate(R.layout.dialog_no_dinero, null)
+                val dialog = android.app.AlertDialog.Builder(this)
+                    .setView(dialogView)
+                    .create()
+
+                val btnCerrar = dialogView.findViewById<Button>(R.id.btnCerrarNoDinero)
+                btnCerrar.setOnClickListener {
+                    dialog.dismiss()
+                }
+
+                dialog.show()
             }
         }
 
