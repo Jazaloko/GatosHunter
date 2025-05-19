@@ -82,6 +82,7 @@ class Register : AppCompatActivity() {
         val password = password.text.toString().trim()
 
         val usuario = User(null, userName, password, 100.0, null)
+
         dbHelper.insertarUsuario(usuario)
 
         // Ejemplo simple: mostrar un Toast de éxito
