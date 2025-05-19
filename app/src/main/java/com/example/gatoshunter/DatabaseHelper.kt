@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import com.example.gatoshunter.R
 import com.example.gatoshunter.clases.Comprador
 import com.example.gatoshunter.clases.Gato
@@ -166,6 +167,22 @@ class DatabaseHelper(context: Context) :
         }
         db.insert(TABLE_COMPRADORES, null, values)
     }
+
+    fun insertarCompradorDiario(compradorId: Int, userId: Int) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_COMPRADOR_ID, compradorId)
+            put(COLUMN_USER_ID, userId)
+        }
+        try {
+            db.insert(TABLE_COMPRADOR_USER, null, values)
+            Log.d("DatabaseHelper", "Insertado comprador $compradorId para usuario $userId en CompradorUser")
+        } catch (e: Exception) {
+            Log.e("DatabaseHelper", "Error al insertar comprador diario: ${e.message}")
+        } finally {
+            db.close()
+        }
+    }
     //endregion
 
     //region INSERTAR DATOS
@@ -204,7 +221,45 @@ class DatabaseHelper(context: Context) :
     //endregion
 
     //region ELIMINAR DATOS
-    // Implementar funciones de eliminación si es necesario
+    // Elimina UN comprador específico de la lista diaria de un usuario
+    fun eliminarCompradorDeUsuario(compradorId: Int, userId: Int) {
+        val db = writableDatabase
+        try {
+            val whereClause = "$COLUMN_COMPRADOR_ID = ? AND $COLUMN_USER_ID = ?"
+            val whereArgs = arrayOf(compradorId.toString(), userId.toString())
+            val deletedRows = db.delete(TABLE_COMPRADOR_USER, whereClause, whereArgs)
+            if (deletedRows > 0) {
+                Log.d("DatabaseHelper", "Eliminado comprador $compradorId para usuario $userId de CompradorUser. Filas afectadas: $deletedRows")
+            } else {
+                Log.d("DatabaseHelper", "No se encontró comprador $compradorId para eliminar para usuario $userId en CompradorUser.")
+            }
+
+        } catch (e: Exception) {
+            Log.e("DatabaseHelper", "Error al eliminar comprador de usuario: ${e.message}")
+        } finally {
+            db.close()
+        }
+    }
+
+    // Elimina TODOS los compradores de la lista diaria de un usuario (para el reinicio diario)
+    fun eliminarCompradoresDiariosDeUsuario(usuarioId: Int) {
+        val db = writableDatabase
+        try {
+            val whereClause = "$COLUMN_USER_ID = ?"
+            val whereArgs = arrayOf(usuarioId.toString())
+            val deletedRows = db.delete(
+                TABLE_COMPRADOR_USER,
+                whereClause,
+                whereArgs
+            )
+            Log.d("DatabaseHelper", "Eliminados $deletedRows compradores diarios para usuario $usuarioId")
+        } catch (e: Exception) {
+            Log.e("DatabaseHelper", "Error al eliminar compradores diarios de usuario: ${e.message}")
+        } finally {
+            db.close()
+        }
+    }
+
     //endregion
 
     //region ACTUALIZAR DATOS
@@ -412,14 +467,14 @@ class DatabaseHelper(context: Context) :
         return listaGatos
     }
 
-    fun obtenerCompradorByUser(User: User): List<Comprador> {
+    fun obtenerCompradoresDiariosByUser(user: User): List<Comprador> {
         val db = readableDatabase
         val listaCompradores = mutableListOf<Comprador>()
         val cursor = db.query(
-            TABLE_COMPRADOR_USER,
+            TABLE_COMPRADOR_USER, // Consulta la tabla que usaremos para la lista diaria
             arrayOf(COLUMN_COMPRADOR_ID),
             "$COLUMN_USER_ID = ?",
-            arrayOf(User.id.toString()),
+            arrayOf(user.id.toString()),
             null,
             null,
             null
@@ -429,11 +484,12 @@ class DatabaseHelper(context: Context) :
             while (it.moveToNext()) {
                 val idComprador = it.getInt(it.getColumnIndexOrThrow(COLUMN_COMPRADOR_ID))
                 getCompradorById(idComprador)?.let { comprador ->
+                    // NOTA: Aquí el comprador cargado de la tabla principal NO tiene el nombre del gato interesado.
+                    // Esa asociación la manejaremos en VenderGato usando SharedPreferences.
                     listaCompradores.add(comprador)
                 }
             }
         }
-
         db.close()
         return listaCompradores
     }
