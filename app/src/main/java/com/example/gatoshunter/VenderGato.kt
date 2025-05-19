@@ -1,9 +1,10 @@
 package com.example.gatoshunter
-
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -47,7 +48,9 @@ class VenderGato : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
-        adapter = CompradorAdapter(emptyList())
+        adapter = CompradorAdapter(emptyList()) { compradorConGato ->
+            intentarVenderDesdeClick(compradorConGato)
+        }
         recyclerView.adapter = adapter
 
 
@@ -61,7 +64,7 @@ class VenderGato : AppCompatActivity() {
         //Botones
         backButton.setOnClickListener { finish() }
 
-        sellButton.setOnClickListener { resolverVenta() }
+        sellButton.setOnClickListener { intentarVender() }
 
         // Timer
         temporizadorMedianoche = TemporizadorMedianoche(timerTextView) {
@@ -71,6 +74,8 @@ class VenderGato : AppCompatActivity() {
         }
         temporizadorMedianoche.iniciar()
     }
+
+
 
     //Cargar compradores diarios o crear si es un nuevo día
     private fun loadOrCreateDailyBuyers(): List<CompradorConGato> {
@@ -186,52 +191,109 @@ class VenderGato : AppCompatActivity() {
 
 
     // Modified selling logic using the activity's currentDailyBuyersList
-    private fun resolverVenta() {
+    private fun intentarVender() {
         val compradorSeleccionadoId = adapter.selectedItemId
-        if (compradorSeleccionadoId != null) {
-
-            val compradorSeleccionado = currentDailyBuyersList.find { it.comprador.id == compradorSeleccionadoId }
-
-            if (compradorSeleccionado != null) {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    val prefs = applicationContext.getAppSharedPreferences()
-                    val user = prefs.getUserAsync("Usuario")!!
-                    val gatosUsuario = dbHelper.obtenerGatosByUser(user)
-
-                    val gatoEncontrado = gatosUsuario.find { it.nombre == compradorSeleccionado.nombreGatoInteres }
-
-                    if (gatoEncontrado != null) {
-                        val dialogView = layoutInflater.inflate(R.layout.dialog_venta_completada, null)
-
-                        val builder = android.app.AlertDialog.Builder(this@VenderGato)
-                            .setView(dialogView)
-
-                        val dialog = builder.create()
-
-                        val mensaje = dialogView.findViewById<TextView>(R.id.mensajeVenta)
-                        val btnAceptar = dialogView.findViewById<Button>(R.id.btnAceptarVenta)
-
-                        mensaje.text = "Has vendido un gato a ${compradorSeleccionado.comprador.nombre}"
-
-                        btnAceptar.setOnClickListener {
-                            adapter.eliminarComprador(compradorSeleccionadoId)
-                            adapter.selectedItemId = null
-                            currentDailyBuyersList = currentDailyBuyersList.filter { it.comprador.id != compradorSeleccionadoId }
-                            dialog.dismiss()
-                        }
-                        dialog.show()
-                    } else {
-                        Toast.makeText(this@VenderGato, "No tienes un gato con ese nombre", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-            } else {
-                Toast.makeText(this, "Error: Comprador no encontrado.", Toast.LENGTH_SHORT).show()
-            }
-        } else {
+        if (compradorSeleccionadoId == null) {
             Toast.makeText(this, "Selecciona un comprador primero", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val compradorSeleccionado = currentDailyBuyersList.find { it.comprador.id == compradorSeleccionadoId }
+
+        if (compradorSeleccionado == null) {
+            Toast.makeText(this, "Error: Comprador no encontrado.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            val prefs = applicationContext.getAppSharedPreferences()
+            val user = prefs.getUserAsync("Usuario")!!
+            val gatosUsuario = dbHelper.obtenerGatosByUser(user)
+
+            val gatoEncontrado = gatosUsuario.find { it.nombre == compradorSeleccionado.nombreGatoInteres }
+
+            if (gatoEncontrado == null) {
+                Toast.makeText(this@VenderGato, "No tienes un gato con ese nombre", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            mostrarDialogoVenta(compradorSeleccionado)
         }
     }
+
+    private fun mostrarDialogoVenta(compradorConGato: CompradorConGato) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_info_comprador, null)
+
+        val precioEditText = dialogView.findViewById<EditText>(R.id.precioEditText)
+        val btnVender = dialogView.findViewById<Button>(R.id.btnVender)
+        val btnCancelar = dialogView.findViewById<Button>(R.id.btnCancelar)
+
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        btnVender.setOnClickListener {
+            val precioStr = precioEditText.text.toString()
+            val precio = precioStr.toDoubleOrNull()
+
+            if (precio == null || precio <= 0) {
+                Toast.makeText(this, "Introduce un precio válido", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val comprador = compradorConGato.comprador
+
+            if (comprador.dinero >= precio) {
+                // Resta el precio al dinero del comprador
+                comprador.dinero -= precio
+
+                // Actualiza la BD en background
+                lifecycleScope.launch(Dispatchers.IO) {
+                    comprador.id?.let { it1 -> dbHelper.actualizarDineroComprador(it1, comprador.dinero) }
+                }
+
+                Toast.makeText(this, "Venta realizada por $precio €", Toast.LENGTH_SHORT).show()
+
+                // Cierra el diálogo
+                dialog.dismiss()
+
+                // Actualiza UI (elimina comprador vendido)
+                comprador.id?.let { it1 -> adapter.eliminarComprador(it1) }
+                adapter.selectedItemId = null
+                currentDailyBuyersList = currentDailyBuyersList.filter { it.comprador.id != comprador.id }
+
+            } else {
+                Toast.makeText(this, "El comprador no tiene suficiente dinero", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        btnCancelar.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+    private fun intentarVenderDesdeClick(compradorConGato: CompradorConGato) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            val prefs = applicationContext.getAppSharedPreferences()
+            val user = prefs.getUserAsync("Usuario")!!
+            val gatosUsuario = dbHelper.obtenerGatosByUser(user)
+
+            val gatoEncontrado = gatosUsuario.find { it.nombre == compradorConGato.nombreGatoInteres }
+
+            if (gatoEncontrado == null) {
+                Toast.makeText(this@VenderGato, "No tienes un gato con ese nombre", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            mostrarDialogoVenta(compradorConGato)
+        }
+    }
+
+
+
+
+
 
 
 }
