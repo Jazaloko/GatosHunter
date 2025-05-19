@@ -49,7 +49,9 @@ class VenderGato : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
-        adapter = CompradorAdapter(emptyList())
+        adapter = CompradorAdapter(emptyList()) { compradorConGato ->
+            intentarVenderDesdeClick(compradorConGato)
+        }
         recyclerView.adapter = adapter
 
         // Obtener el usuario actual al iniciar la actividad
