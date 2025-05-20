@@ -22,7 +22,7 @@ class TemporizadorMedianoche(
             } else {
                 textView.text = "Tiempo restante: 00:00:00"
                 onMidnightReached()
-                handler.postDelayed(this, 1000) // Reinicia para el nuevo día
+                handler.postDelayed(this, 1000)
             }
         }
     }
