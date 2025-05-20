@@ -32,9 +32,9 @@ class BuscarGato : AppCompatActivity() {
     private lateinit var temporizadorMedianoche: TemporizadorMedianoche
 
     private var currentDailyCatsList: List<Gato> = emptyList()
-    private var currentUser: User? = null // Variable to store the current user
+    private var currentUser: User? = null
 
-    // Keys for SharedPreferences, now *user-specific*
+    // Keys SharedPreferences
     private val KEY_DAILY_CAT_AVAILABILITY_MAP_BASE = "daily_cat_availability_map" // Base key
     private val KEY_LAST_GENERATION_TIMESTAMP_BASE = "last_generation_timestamp_buscar_gato" // Base key
 
@@ -55,22 +55,20 @@ class BuscarGato : AppCompatActivity() {
         adapter = GatoAdapter(emptyList(), null)
         recyclerView.adapter = adapter
 
-        // Obtain the current user when the activity starts
+        // Obtener al usuario actual
         lifecycleScope.launch(Dispatchers.IO) {
             val prefs = applicationContext.getAppSharedPreferences()
-            currentUser = prefs.getUserAsync("Usuario") // Get the user (should now work with extensions)
+            currentUser = prefs.getUserAsync("Usuario")
 
             if (currentUser != null) {
-                // Load or create daily cats for the current user
                 currentDailyCatsList = loadOrCreateDailyCats(currentUser!!)
                 withContext(Dispatchers.Main) {
                     adapter.actualizarLista(currentDailyCatsList)
                 }
             } else {
-                // Handle the case where the user could not be loaded
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@BuscarGato, "Error: No se pudo cargar el usuario.", Toast.LENGTH_LONG).show()
-                    finish() // Close the activity if no user
+                    finish()
                 }
             }
         }
@@ -81,12 +79,11 @@ class BuscarGato : AppCompatActivity() {
         }
 
         buyButton.setOnClickListener {
-            resolverCompra()
+            resolverAdoptacion()
         }
 
         temporizadorMedianoche = TemporizadorMedianoche(timerTextView) {
             lifecycleScope.launch(Dispatchers.IO) {
-                // Pass the current user to reset cats for that specific user
                 currentUser?.let { user ->
                     updateRecyclerViewData(user)
                 } ?: run {
@@ -97,9 +94,9 @@ class BuscarGato : AppCompatActivity() {
         temporizadorMedianoche.iniciar()
     }
 
-    // --- Daily Cat Management Logic (User-specific) ---
+    // --- Gatos diarios ---
 
-    // Load saved daily cat IDs or select new ones based on the day and user.
+    // Cargar o seleccionar gatos basado en el usuario.
     private fun loadOrCreateDailyCats(user: User): List<Gato> {
         val lastTimestamp = cargarUltimaGeneracionTimestamp(user.id!!)
         val currentCalendar = Calendar.getInstance()
@@ -113,8 +110,7 @@ class BuscarGato : AppCompatActivity() {
             val catAvailabilityMap = cargarDailyCatAvailabilityMap(user.id!!)
             val allCats = dbHelper.obtenerGatos()
 
-            // Filter by availability and ensure the user doesn't already own it
-            val currentUserCats = dbHelper.obtenerGatosByUser(user) // Use the passed user
+            val currentUserCats = dbHelper.obtenerGatosByUser(user)
 
             allCats.filter { gato ->
                 val isAvailable = catAvailabilityMap[gato.id.toString()] == true
@@ -125,45 +121,47 @@ class BuscarGato : AppCompatActivity() {
             }
         } else {
             Log.d("BuscarGato", "Nuevo día o no timestamp para usuario ${user.id}. Generando nuevos gatos y actualizando SharedPreferences.")
-            selectAndSaveNewDailyCats(user) // Pass the user
+            selectAndSaveNewDailyCats(user)
         }
     }
 
-    // Selects 5 random cats, marks them as available, and saves their IDs in SharedPreferences (user-specific).
+    // Se eligen 5 gatos aleatorios, y se añaden a cada usuario especifico
     private fun selectAndSaveNewDailyCats(user: User): List<Gato> {
         val allPotentialCats = dbHelper.obtenerGatos()
         val selectedCats = allPotentialCats.shuffled().take(5)
 
+        //Se guarda el id de cada gato seleccionado con el valor True
         val catAvailabilityMap = mutableMapOf<String, Boolean>()
         selectedCats.forEach { gato ->
             gato.id?.let { catAvailabilityMap[it.toString()] = true }
         }
 
-        // Save the map of Gato ID -> availability status for this user
+        // Se guarda el mapa de disponibilidad de gatos
         guardarDailyCatAvailabilityMap(user.id!!, catAvailabilityMap)
 
-        // Save the timestamp of generation for this user
+        // Se guarda cuando se hizo este proceso
         guardarUltimaGeneracionTimestamp(System.currentTimeMillis(), user.id!!)
 
         Log.d("BuscarGato", "Generados y guardados ${selectedCats.size} gatos diarios para usuario ${user.id}.")
         return selectedCats
     }
 
-    // --- SharedPreferences Logic (for Gato ID -> Availability Map, per user) ---
 
-    // Saves the map of Gato ID -> availability status in SharedPreferences for a user.
+    // --- SharedPreferences User Logic ---
+
+    // guarda el mapa de disponibilidad de gatos por Usuario
     private fun guardarDailyCatAvailabilityMap(userId: Int, map: Map<String, Boolean>) {
         val prefs = getSharedPreferences(KEY_DAILY_CAT_AVAILABILITY_MAP_BASE, MODE_PRIVATE)
-        val key = "${KEY_DAILY_CAT_AVAILABILITY_MAP_BASE}_$userId" // User-specific key
+        val key = "${KEY_DAILY_CAT_AVAILABILITY_MAP_BASE}_$userId"
         val jsonObject = JSONObject(map as Map<*, *>).toString()
         prefs.edit().putString(key, jsonObject).apply()
         Log.d("BuscarGato", "Guardado mapa GatoId->Availability para usuario $userId: $jsonObject")
     }
 
-    // Loads the map of Gato ID -> availability status from SharedPreferences for a user.
+    // Garga los gatos disponibles para el usuario
     private fun cargarDailyCatAvailabilityMap(userId: Int): Map<String, Boolean> {
         val prefs = getSharedPreferences(KEY_DAILY_CAT_AVAILABILITY_MAP_BASE, MODE_PRIVATE)
-        val key = "${KEY_DAILY_CAT_AVAILABILITY_MAP_BASE}_$userId" // User-specific key
+        val key = "${KEY_DAILY_CAT_AVAILABILITY_MAP_BASE}_$userId"
         val jsonString = prefs.getString(key, null)
 
         return if (jsonString.isNullOrEmpty()) {
@@ -184,17 +182,17 @@ class BuscarGato : AppCompatActivity() {
         }
     }
 
-    // --- SharedPreferences Logic (for Timestamp, per user) ---
+    // --- SharedPreferences Time Logic  ---
 
-    // Save the timestamp of the last generation of cats (per user).
+    // Guarda cuando se hizo la lista, por usuario.
     private fun guardarUltimaGeneracionTimestamp(timestamp: Long, userId: Int) {
         val prefs = getSharedPreferences(KEY_LAST_GENERATION_TIMESTAMP_BASE, MODE_PRIVATE)
-        val key = "${KEY_LAST_GENERATION_TIMESTAMP_BASE}_$userId" // User-specific key
+        val key = "${KEY_LAST_GENERATION_TIMESTAMP_BASE}_$userId"
         prefs.edit().putLong(key, timestamp).apply()
         Log.d("BuscarGato", "Timestamp de última generación guardado para usuario $userId: $timestamp")
     }
 
-    // Load the timestamp of the last generation of cats (per user).
+    // Cargar cuando se hizo la lista, por usuario.
     private fun cargarUltimaGeneracionTimestamp(userId: Int): Long {
         val prefs = getSharedPreferences(KEY_LAST_GENERATION_TIMESTAMP_BASE, MODE_PRIVATE)
         val key = "${KEY_LAST_GENERATION_TIMESTAMP_BASE}_$userId" // User-specific key
@@ -203,7 +201,7 @@ class BuscarGato : AppCompatActivity() {
         return timestamp
     }
 
-    // Reset cats at midnight, similar to how VenderGato resets buyers.
+    // Resetear los gatos
     private suspend fun updateRecyclerViewData(user: User) {
         val nuevosGatos = selectAndSaveNewDailyCats(user) // Pass the user to get new cats for them
         withContext(Dispatchers.Main) {
@@ -214,18 +212,18 @@ class BuscarGato : AppCompatActivity() {
         }
     }
 
-    // --- Purchase Logic ---
+    // --- Adoptacion ---
 
-    private fun resolverCompra() {
+    private fun resolverAdoptacion() {
         val gatoSeleccionado = adapter.getGatoSeleccionado()
         if (gatoSeleccionado != null && currentUser != null) {
             lifecycleScope.launch(Dispatchers.IO) {
-                dbHelper.insertarGatoUser(gatoSeleccionado, currentUser!!) // Use currentUser to insert
+                dbHelper.insertarGatoUser(gatoSeleccionado, currentUser!!)
 
-                // Update the availability map in SharedPreferences for this user
+                // Actualizar la disponibilidad del gato
                 val currentAvailabilityMap = cargarDailyCatAvailabilityMap(currentUser!!.id!!).toMutableMap()
                 gatoSeleccionado.id?.let {
-                    currentAvailabilityMap[it.toString()] = false // Mark as unavailable for this user
+                    currentAvailabilityMap[it.toString()] = false // Se marca que no esta dispnible
                 }
                 guardarDailyCatAvailabilityMap(currentUser!!.id!!, currentAvailabilityMap)
 
