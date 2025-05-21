@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        startService(Intent(this, MusicService::class.java))
 
 
         profileImageView = findViewById(R.id.profileImageView)
@@ -86,12 +85,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        cargarDatosGatos()
-        colocarDatosUsuario()
 
-    }
 
     private fun cargarDatosGatos() {
         lifecycleScope.launch(Dispatchers.IO) {

@@ -7,23 +7,35 @@ import android.os.IBinder
 
 class MusicService : Service() {
 
-    private lateinit var mediaPlayer: MediaPlayer
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate() {
         super.onCreate()
-        // Reemplaza R.raw.tu_musica con tu archivo mp3 en res/raw
         mediaPlayer = MediaPlayer.create(this, R.raw.musica_fondo)
-        mediaPlayer.isLooping = true
+        mediaPlayer?.isLooping = true
+        mediaPlayer?.setOnErrorListener { mp, what, extra ->
+            mp.reset()
+            true
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        mediaPlayer.start()
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer.create(this, R.raw.musica_fondo)
+            mediaPlayer?.isLooping = true
+        }
+
+        if (!mediaPlayer!!.isPlaying) {
+            mediaPlayer?.start()
+        }
+
         return START_STICKY
     }
 
     override fun onDestroy() {
-        mediaPlayer.stop()
-        mediaPlayer.release()
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
         super.onDestroy()
     }
 
