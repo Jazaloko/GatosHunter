@@ -70,6 +70,7 @@ class Login : AppCompatActivity() {
                                 val editor = prefs.edit()
                                 prefs.putBooleanAsync("isLoggedIn", true) // Guardar estado de login
                                 editor.putUserAsync("Usuario", user!!)
+                                startService(Intent(this@Login, MusicService::class.java))
                                 Toast.makeText(
                                     this@Login,
                                     "Inicio de sesión exitoso",

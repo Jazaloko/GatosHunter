@@ -20,6 +20,7 @@
         android:background="@drawable/border_textview"
         android:gravity="center"
         android:text="¡Dinero insuficiente!"
+
         android:textColor="@android:color/black"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -32,6 +33,7 @@
         android:gravity="center"
         android:paddingTop="12dp"
         android:paddingBottom="12dp"
+        android:textStyle="bold"
         android:text="Si no tienes dinero, fuera!!"
         android:textColor="@android:color/darker_gray"
         android:textSize="16sp" />

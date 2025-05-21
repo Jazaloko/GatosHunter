@@ -515,5 +515,14 @@ class DatabaseHelper(context: Context) :
         db.update("Compradores", valores, whereClause, whereArgs)
         db.close()
     }
+    fun actualizarDineroUsuario(id: Int, dinero: Double) {
+        val db = this.writableDatabase
+        val values = ContentValues()
+        values.put("Dinero", dinero)
+        db.update("Users", values, "id = ?", arrayOf(id.toString())) // <-- CAMBIO AQUÍ
+        db.close()
+    }
+
+
 
 }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -37,9 +38,12 @@ class MainActivity : AppCompatActivity() {
     var textDinero: TextView? = null
     private lateinit var adapter: GatoAdapter
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        startService(Intent(this, MusicService::class.java))
+
 
         profileImageView = findViewById(R.id.profileImageView)
         val button1: Button = findViewById(R.id.button1)
@@ -85,6 +89,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         cargarDatosGatos()
+        colocarDatosUsuario()
+
     }
 
     private fun cargarDatosGatos() {

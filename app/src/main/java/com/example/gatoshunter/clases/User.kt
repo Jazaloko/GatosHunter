@@ -8,6 +8,6 @@ data class User(
     val id: Int?,
     val nombre: String,
     val password: String,
-    val dinero: Double,
+    var dinero: Double,
     val img: String?
 )

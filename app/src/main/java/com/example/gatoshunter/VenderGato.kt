@@ -2,20 +2,17 @@ package com.example.gatoshunter
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gatoshunter.clases.Comprador
 import com.example.gatoshunter.adaptes.CompradorAdapter
-import com.example.gatoshunter.clases.Gato
 import com.example.gatoshunter.clases.User
 import com.example.miapp.database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
@@ -85,7 +82,17 @@ class VenderGato : AppCompatActivity() {
         }
 
         sellButton.setOnClickListener {
-            resolverVenta()
+            val compradorIdSeleccionado = adapter.selectedItemId
+            if (compradorIdSeleccionado != null) {
+                val compradorConGato = currentDailyBuyersList.find { it.comprador.id == compradorIdSeleccionado }
+                if (compradorConGato != null) {
+                    intentarVenderDesdeClick(compradorConGato)
+                } else {
+                    Toast.makeText(this, "Comprador no encontrado.", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Selecciona un comprador primero.", Toast.LENGTH_SHORT).show()
+            }
         }
 
         // Timer
@@ -346,6 +353,18 @@ class VenderGato : AppCompatActivity() {
             if (comprador.dinero >= precio) {
                 // Resta el precio al dinero del comprador
                 comprador.dinero -= precio
+                currentUser?.let { user ->
+                    user.dinero += precio
+
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        dbHelper.actualizarDineroUsuario(user.id!!, user.dinero)
+
+                        // Guardar también en SharedPreferences
+                        val prefs = applicationContext.getAppSharedPreferences()
+                        val editor = prefs.edit()
+                        editor.putUserAsync("Usuario", user)
+                    }
+                }
 
                 // Actualiza la BD en background
                 lifecycleScope.launch(Dispatchers.IO) {
