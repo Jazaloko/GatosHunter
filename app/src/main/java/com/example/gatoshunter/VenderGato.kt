@@ -72,7 +72,7 @@ class VenderGato : AppCompatActivity() {
                 // Manejar el caso donde no se pudo obtener el usuario
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@VenderGato, "Error: No se pudo cargar el usuario.", Toast.LENGTH_LONG).show()
-                    finish() // Cerrar la actividad si no hay usuario
+                    finish()
                 }
             }
         }
@@ -105,9 +105,8 @@ class VenderGato : AppCompatActivity() {
 
     data class CompradorConGato(val comprador: Comprador, val nombreGatoInteres: String?, var gatoUsuarioIdPreferido: Int? = null)
 
-    //Cargar compradores diarios o crear si es un nuevo día. Ahora requiere el usuario y usa la DB.
+    //Cargar compradores diarios o crear si es un nuevo día.
     private fun loadOrCreateDailyBuyers(user: User): List<CompradorConGato> {
-        // Pass the user's ID here!
         val lastTimestamp = cargarUltimaGeneracionTimestamp(user.id!!)
         val currentCalendar = Calendar.getInstance()
         val lastGenerationCalendar = Calendar.getInstance().apply { timeInMillis = lastTimestamp }
@@ -140,25 +139,22 @@ class VenderGato : AppCompatActivity() {
     }
 
 
-    // Selecciona 3 compradores aleatorios, los añade a CompradorUser para el usuario,
-    // asigna gatos aleatorios y guarda la asociación en SharedPreferences.
-    // También actualiza el timestamp.
+    // Selecciona 5 compradores aleatorios, los añade a CompradorUser para el usuario
     private fun selectAndSaveNewDailyBuyers(user: User): List<CompradorConGato> {
         // Vacía la tabla CompradorUser para este usuario al inicio de un nuevo día
         dbHelper.eliminarCompradoresDiariosDeUsuario(user.id!!)
         Log.d("VenderGato", "Tabla CompradorUser vaciada para usuario ${user.id} al inicio del día.")
 
-        val allPotentialBuyers = dbHelper.obtenerCompradores() // Get ALL potential buyers from main DB table
-        val allPotentialGatos = dbHelper.obtenerGatos() // Get ALL potential gatos from main DB table
-        val gatosUsuario = dbHelper.obtenerGatosByUser(user) // Get ALL gatos from user's DB table
+        val allPotentialBuyers = dbHelper.obtenerCompradores()
+        val allPotentialGatos = dbHelper.obtenerGatos()
+        val gatosUsuario = dbHelper.obtenerGatosByUser(user)
 
-        // Ensure we don't select more buyers/gatos than available
-        val numberOfItemsToSelect = minOf(3, allPotentialBuyers.size, allPotentialGatos.size)
+        val numberOfItemsToSelect = minOf(5, allPotentialBuyers.size, allPotentialGatos.size)
         val selectedBuyers = allPotentialBuyers.shuffled().take(numberOfItemsToSelect)
         val selectedGatos = allPotentialGatos.shuffled().take(numberOfItemsToSelect)
 
         val compradoresConGato = mutableListOf<CompradorConGato>()
-        val buyerCatMap = mutableMapOf<String, String>() // Mapa para guardar CompradorId -> NombreGato
+        val buyerCatMap = mutableMapOf<String, String>()
 
         selectedBuyers.zip(selectedGatos) { comprador, gato ->
             val compradorConGato = CompradorConGato(comprador, gato.nombre)
@@ -171,11 +167,11 @@ class VenderGato : AppCompatActivity() {
             buyerCatMap[comprador.id.toString()] = gato.nombre
         }
 
-        // Guarda el mapa de asociación CompradorId -> NombreGato en SharedPreferences para este usuario (already user-specific)
+        // Guarda el mapa de asociación CompradorId/NombreGato
         guardarDailyBuyerCatMap(user.id, buyerCatMap)
 
-        // Guarda el timestamp de la generación (PER USER)
-        guardarUltimaGeneracionTimestamp(System.currentTimeMillis(), user.id) // Pass the user's ID here!
+        // Guarda el timestamp de la generación
+        guardarUltimaGeneracionTimestamp(System.currentTimeMillis(), user.id)
 
         Log.d("VenderGato", "Generados y guardados ${compradoresConGato.size} compradores diarios con gatos para usuario ${user.id}.")
         return compradoresConGato
@@ -184,7 +180,7 @@ class VenderGato : AppCompatActivity() {
 
     // --- Lógica para guardar y cargar la asociación CompradorId -> NombreGato interesado (en SP, por usuario) ---
 
-    // Guarda el mapa de asociación CompradorId -> NombreGato interesado en SharedPreferences para un usuario
+    // Guarda el mapa de asociación CompradorId -> NombreGato
     private fun guardarDailyBuyerCatMap(userId: Int, map: Map<String, String>) {
         val prefs = getSharedPreferences(KEY_DAILY_BUYER_CAT_MAP, MODE_PRIVATE)
         val key = "${KEY_DAILY_BUYER_CAT_MAP}_$userId" // Clave única por usuario
@@ -193,7 +189,7 @@ class VenderGato : AppCompatActivity() {
         Log.d("VenderGato", "Guardado mapa CompradorId->NombreGato para usuario $userId: $jsonObject")
     }
 
-    // Carga el mapa de asociación CompradorId -> NombreGato interesado desde SharedPreferences para un usuario
+    // Carga el mapa de asociación CompradorId -> NombreGato
     private fun cargarDailyBuyerCatMap(userId: Int): Map<String, String> {
         val prefs = getSharedPreferences(KEY_DAILY_BUYER_CAT_MAP, MODE_PRIVATE)
         val key = "${KEY_DAILY_BUYER_CAT_MAP}_$userId" // Clave única por usuario
@@ -217,9 +213,9 @@ class VenderGato : AppCompatActivity() {
         }
     }
 
-    // --- Lógica para el timestamp (en SP, global) ---
+    // --- Lógica para el timestamp  ---
 
-    // Guardar el timestamp de la última generación de compradores (per user)
+    // Guardar el timestamp de la última generación de compradores
     private fun guardarUltimaGeneracionTimestamp(timestamp: Long, userId: Int) {
         val prefs = getSharedPreferences(KEY_LAST_GENERATION_TIMESTAMP_BASE, MODE_PRIVATE)
         val key = "${KEY_LAST_GENERATION_TIMESTAMP_BASE}_$userId" // User-specific key
@@ -227,30 +223,30 @@ class VenderGato : AppCompatActivity() {
         Log.d("VenderGato", "Timestamp de última generación guardado para user $userId: $timestamp")
     }
 
-    // Cargar el timestamp de la última generación de compradores (per user)
+    // Cargar el timestamp de la última generación de compradores
     private fun cargarUltimaGeneracionTimestamp(userId: Int): Long {
         val prefs = getSharedPreferences(KEY_LAST_GENERATION_TIMESTAMP_BASE, MODE_PRIVATE)
-        val key = "${KEY_LAST_GENERATION_TIMESTAMP_BASE}_$userId" // User-specific key
-        val timestamp = prefs.getLong(key, 0L) // Default to 0 if not found
+        val key = "${KEY_LAST_GENERATION_TIMESTAMP_BASE}_$userId"
+        val timestamp = prefs.getLong(key, 0L)
         Log.d("VenderGato", "Timestamp de última generación cargado para user $userId: $timestamp")
         return timestamp
     }
 
 
 
-    // Resetear Compradores a media noche. Ahora requiere el usuario y usa la DB y SP.
+    // Resetear Compradores a media noche.
     private suspend fun updateRecyclerViewData(user: User) {
-        val nuevosCompradores = selectAndSaveNewDailyBuyers(user) // Pasa el usuario
+        val nuevosCompradores = selectAndSaveNewDailyBuyers(user)
         withContext(Dispatchers.Main) {
-            currentDailyBuyersList = nuevosCompradores // Actualizar la lista in-memory
+            currentDailyBuyersList = nuevosCompradores
             Toast.makeText(this@VenderGato, "¡Medianoche alcanzada! Recargando compradores...", Toast.LENGTH_SHORT).show()
-            adapter.actualizarLista(currentDailyBuyersList) // Actualizar adapter
-            adapter.selectedItemId = null // Deselect any previous buyer
+            adapter.actualizarLista(currentDailyBuyersList)
+            adapter.selectedItemId = null
         }
     }
 
 
-    // Modified selling logic using the activity's currentDailyBuyersList and interacting with DB
+    // Logica de venta
     private fun resolverVenta() {
         val compradorSeleccionadoId = adapter.selectedItemId
         if (compradorSeleccionadoId != null && currentUser != null) {
@@ -292,7 +288,6 @@ class VenderGato : AppCompatActivity() {
 
                                         dialog.dismiss()
 
-                                        // ✅ IMPORTANTE: mover esto aquí para que se ejecute solo después de la venta
                                         startActivity(Intent(this@VenderGato, MainActivity::class.java))
                                         finish()
                                     }
@@ -362,10 +357,10 @@ class VenderGato : AppCompatActivity() {
                 // Cierra el diálogo
                 dialog.dismiss()
 
-// Primero llama a resolverVenta() para eliminar en la base de datos
+                // Primero llama a resolverVenta() para eliminar en la base de datos
                 resolverVenta()
 
-// Luego actualiza la interfaz
+                // Luego actualiza la interfaz
                 adapter.eliminarComprador(comprador.id!!)
                 adapter.selectedItemId = null
                 currentDailyBuyersList = currentDailyBuyersList.filter { it.comprador.id != comprador.id }
