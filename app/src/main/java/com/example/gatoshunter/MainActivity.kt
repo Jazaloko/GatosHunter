@@ -85,6 +85,38 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun mostrarDialogoCambiarNombre() {
+        val editText = EditText(this)
+        editText.hint = "Nuevo nombre de usuario"
+
+        AlertDialog.Builder(this)
+            .setTitle("Cambiar nombre de usuario")
+            .setView(editText)
+            .setPositiveButton("Guardar") { _, _ ->
+                val nuevoNombre = editText.text.toString().trim()
+                if (nuevoNombre.isNotEmpty()) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        val prefs = applicationContext.getAppSharedPreferences()
+                        var user = prefs.getUserAsync("Usuario")
+
+                        if (user != null) {
+                            user = user.copy(nombre = nuevoNombre)
+                            prefs.edit().putUserAsync("Usuario", user)
+                            dbHelper.updateUsuario(user)
+
+                            withContext(Dispatchers.Main) {
+                                textUser?.text = nuevoNombre
+                                Toast.makeText(this@MainActivity, "Nombre actualizado", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                } else {
+                    Toast.makeText(this, "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
 
 
     private fun cargarDatosGatos() {
@@ -115,11 +147,33 @@ class MainActivity : AppCompatActivity() {
         📝 Descripción: ${gato.descripcion}
     """.trimIndent()
 
-        AlertDialog.Builder(this)
+        // Reproducir sonido nyaArigato.mp3
+        var mediaPlayer = MediaPlayer.create(this, R.raw.nyaarigato)
+        mediaPlayer?.start()
+
+        // Liberar recursos al terminar la reproducción
+//        mediaPlayer.setOnCompletionListener {
+//            it.release()
+//        }
+
+        val dialog = AlertDialog.Builder(this)
             .setTitle("Información del Gato")
             .setView(dialogView)
-            .setPositiveButton("OK", null)
-            .show()
+            .setPositiveButton("OK", null) // temporalmente null
+            .create()
+
+        dialog.setOnShowListener {
+            val button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            button.setOnClickListener {
+                mediaPlayer?.let {
+                    if (it.isPlaying) it.stop()
+                    it.release()
+                }
+                dialog.dismiss()
+            }
+        }
+
+        dialog.show()
     }
 
     private fun colocarDatosUsuario() {
@@ -178,7 +232,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showImageSourceDialog() {
-        val options = arrayOf("Elegir de la galería", "Seleccionar avatar predeterminado")
+        val options = arrayOf("Elegir de la galería", "Seleccionar avatar predeterminado","Cambiar nombre Usuario")
 
         AlertDialog.Builder(this)
             .setTitle("Selecciona imagen de perfil")
@@ -186,6 +240,7 @@ class MainActivity : AppCompatActivity() {
                 when (which) {
                     0 -> openImageChooser()
                     1 -> showAvatarDialog()
+                    2 -> mostrarDialogoCambiarNombre()
                 }
             }
             .show()
