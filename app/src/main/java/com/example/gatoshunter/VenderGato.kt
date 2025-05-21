@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -330,10 +331,51 @@ class VenderGato : AppCompatActivity() {
 
     private fun mostrarDialogoVenta(compradorConGato: CompradorConGato) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_info_comprador, null)
+        val gato = compradorConGato.nombreGatoInteres?.let { dbHelper.obtenerGatoPorNombre(it) }
 
         val precioEditText = dialogView.findViewById<EditText>(R.id.precioEditText)
         val btnVender = dialogView.findViewById<Button>(R.id.btnVender)
         val btnCancelar = dialogView.findViewById<Button>(R.id.btnCancelar)
+
+        // Nuevos TextViews para mostrar datos
+        val compradorNombreText = dialogView.findViewById<TextView>(R.id.textNombreComprador)
+        val compradorDineroText = dialogView.findViewById<TextView>(R.id.textDineroComprador)
+        val gatoNombreText = dialogView.findViewById<TextView>(R.id.textNombreGato)
+        val gatoInfoText = dialogView.findViewById<TextView>(R.id.textInfoGato)
+
+        val comprador = compradorConGato.comprador
+
+        val imgCompradorView = dialogView.findViewById<ImageView>(R.id.imgComprador)
+        val imgGatoView = dialogView.findViewById<ImageView>(R.id.imgGato)
+
+// Cargar imagen del comprador
+        val compradorImgResId = resources.getIdentifier(comprador.img, "drawable", packageName)
+        if (compradorImgResId != 0) {
+            imgCompradorView.setImageResource(compradorImgResId)
+        }
+
+// Cargar imagen del gato
+        if (gato != null) {
+            val gatoImgResId = resources.getIdentifier(gato.img, "drawable", packageName)
+            if (gatoImgResId != 0) {
+                imgGatoView.setImageResource(gatoImgResId)
+            }
+        }
+        // Mostrar datos del comprador
+        compradorNombreText.text = "👤 ${comprador.nombre}"
+        compradorDineroText.text = "💰 Tiene: ${comprador.dinero} €"
+
+
+        // Mostrar datos del gato
+        gatoNombreText.text = "🐱 Gato: ${gato?.nombre}"
+        if (gato != null) {
+            gatoInfoText.text = """
+            🏠 Localidad: ${gato.localidad}
+            ⚖️ Peso: ${gato.peso} kg
+            😊 Emoción: ${gato.emocion}
+            📝 ${gato.descripcion}
+        """.trimIndent()
+        }
 
         val dialog = android.app.AlertDialog.Builder(this)
             .setView(dialogView)
@@ -407,6 +449,8 @@ class VenderGato : AppCompatActivity() {
 
         dialog.show()
     }
+
+
     private fun intentarVenderDesdeClick(compradorConGato: CompradorConGato) {
         lifecycleScope.launch(Dispatchers.Main) {
             val prefs = applicationContext.getAppSharedPreferences()

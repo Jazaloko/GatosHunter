@@ -145,6 +145,8 @@ class MainActivity : AppCompatActivity() {
         ⚖️ Peso: ${gato.peso} kg
         😊 Emoción: ${gato.emocion}
         📝 Descripción: ${gato.descripcion}
+        ----------nya ichi ni san nya arigato!------------
+        
     """.trimIndent()
 
         // Reproducir sonido nyaArigato.mp3

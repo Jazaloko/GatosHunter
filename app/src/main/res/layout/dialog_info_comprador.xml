@@ -6,6 +6,65 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <!-- Imagen Comprador -->
+    <ImageView
+        android:id="@+id/imgComprador"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="centerCrop"
+        android:contentDescription="Imagen Comprador"
+        android:layout_marginBottom="12dp"
+        />  <!-- placeholder -->
+
+    <!-- Datos Comprador -->
+    <TextView
+        android:id="@+id/textNombreComprador"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nombre Comprador"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/textDineroComprador"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dinero Comprador"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Imagen Gato -->
+    <ImageView
+        android:id="@+id/imgGato"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="centerCrop"
+        android:contentDescription="Imagen Gato"
+        android:layout_marginBottom="12dp"/>
+ <!-- placeholder -->
+
+    <!-- Datos Gato -->
+    <TextView
+        android:id="@+id/textNombreGato"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nombre Gato"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/textInfoGato"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Detalles Gato"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Precio -->
     <EditText
         android:id="@+id/precioEditText"
         android:layout_width="match_parent"
@@ -15,7 +74,7 @@
         android:textSize="18sp"
         android:padding="12dp" />
 
-
+    <!-- Botones -->
     <Button
         android:id="@+id/btnVender"
         android:layout_width="match_parent"

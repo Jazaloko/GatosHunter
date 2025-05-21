@@ -522,6 +522,27 @@ class DatabaseHelper(context: Context) :
         db.update("Users", values, "id = ?", arrayOf(id.toString())) // <-- CAMBIO AQUÍ
         db.close()
     }
+    fun obtenerGatoPorNombre(nombre: String): Gato? {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Gatos WHERE name = ?", arrayOf(nombre))
+
+        var gato: Gato? = null
+        if (cursor.moveToFirst()) {
+            gato = Gato(
+                id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+                nombre = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NOMBRE)),
+                localidad = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LOCALIDAD)),
+                peso = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PESO)),
+                emocion = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMOCION)),
+                descripcion = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPCION)),
+                img = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMG_PATH))
+            )
+        }
+
+        cursor.close()
+        return gato
+    }
+
 
 
 
